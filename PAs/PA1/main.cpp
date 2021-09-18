@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int gameIteration(int map[][WIDTH], bool matches[][WIDTH], int& remaining_moves, int& score) {
+int gameIteration(int map[][WIDTH], int& remaining_moves, int& score) {
     // return values:
     // -1 invalue input
     //  0 game quit or finished
@@ -34,7 +34,7 @@ int gameIteration(int map[][WIDTH], bool matches[][WIDTH], int& remaining_moves,
         if(!(cin >> x >> y) || x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout<<"Invalid input: please input an integer between 0 and 9 inclusive for x and y\n";
+            cout<<"Invalid input: please input an integer between 0 and 8 inclusive for x and y\n";
             return -1;
         }
         cin >> direction;
@@ -44,8 +44,8 @@ int gameIteration(int map[][WIDTH], bool matches[][WIDTH], int& remaining_moves,
             cout<<"Invalid input: please input up/down/left/right for direction\n";
             return -1;            
         }
-        if(( y == 0 && direction == "down" ) || ( y == HEIGHT && direction == "up")
-                || ( x == 0 && direction == "left") || ( x == WIDTH && direction == "right") ) {
+        if(( y == 0 && direction == "down" ) || ( y == HEIGHT - 1 && direction == "up")
+                || ( x == 0 && direction == "left") || ( x == WIDTH - 1 && direction == "right") ) {
             cout<<"Invalid input: out of bounds\n";
             return -1;
         }
@@ -94,7 +94,6 @@ int gameIteration(int map[][WIDTH], bool matches[][WIDTH], int& remaining_moves,
 
 int main() {
     int map[MAX_ROWS][WIDTH];
-    bool matches[HEIGHT][WIDTH] = {0};
     int score = 0;
     int remaining_moves = MAX_MOVES;
 
@@ -110,7 +109,7 @@ int main() {
 
 
     while( true ) {
-        if( gameIteration(map, matches, remaining_moves, score) == 0) {
+        if( gameIteration(map, remaining_moves, score) == 0) {
             break;
         }
     }

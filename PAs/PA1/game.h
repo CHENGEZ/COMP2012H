@@ -9,7 +9,6 @@ const std::string INPUT_FILE = "map.txt";
 const char tile[] = { ' ', '1' , '2' , '3', '4', '5', '6' };
 
 extern int map[][WIDTH];
-extern bool matches[HEIGHT][WIDTH];
 extern int score;
 extern int remaining_moves;
 
