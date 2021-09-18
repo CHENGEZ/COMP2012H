@@ -122,6 +122,7 @@ int findMatches(int map[][WIDTH], bool matches[HEIGHT][WIDTH])
                 matches[y_cor][x_cor + 1] = true;
             }
         }
+        consecutiveCnt = 0;
     }
 
     consecutiveCnt = 0;
@@ -145,6 +146,7 @@ int findMatches(int map[][WIDTH], bool matches[HEIGHT][WIDTH])
                 matches[y_cor + 1][x_cor] = true;
             }
         }
+        consecutiveCnt = 0;
     }
 
     // count how many trues have we got
@@ -180,7 +182,7 @@ int processMatches(int map[][WIDTH])
                 {
                     for (int index = y_pos; index <= MAX_ROWS - 2; index++)
                     {
-                        map[y_pos][x_pos] = map[y_pos + 1][x_pos];
+                        map[index][x_pos] = map[index + 1][x_pos];
                         map[MAX_ROWS - 1][x_pos] = 0;
                     }
                 }
