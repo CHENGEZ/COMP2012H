@@ -5,8 +5,9 @@
 using namespace std;
 
 bool matches[HEIGHT][WIDTH] = {};
-int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
-int num_candidate_moves = 0;
+//int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
+//int num_candidate_moves = 0;
+// int map_copy[][WIDTH] = {};
 
 void readMap(string filename, int map[][WIDTH])
 {
@@ -315,8 +316,53 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
  ***********************************************************************/
 int solver(int map[][WIDTH], int return_coordinates[4])
 {
+    int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
+    int num_candidate_moves = 0;
 
-    return 0;
+    int optimalGain = considerMoves(map, candidate_moves, num_candidate_moves);
+
+    if (num_candidate_moves == 1)
+    {
+        return_coordinates[0] = candidate_moves[0][0];
+        return_coordinates[1] = candidate_moves[0][1];
+        return_coordinates[2] = candidate_moves[0][2];
+        return_coordinates[3] = candidate_moves[0][3];
+        return optimalGain;
+    }
+
+    else if (num_candidate_moves == 0)
+    {
+        return 0;
+    }
+
+    else
+    {
+        int map_copy[][WIDTH] = {};
+        int possibleGains[num_candidate_moves] = {};
+        for (int candidate = 0; candidate < num_candidate_moves; candidate++)
+        {
+            int subOptimalGain = 0;
+            copyMap(map, map_copy, MAX_ROWS);
+            swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
+            subOptimalGain += solver(map_copy);
+            possibleGains[candidate] = subOptimalGain;
+        }
+
+        int bestCandidate = 0;
+
+        for (int k = 0; k < num_candidate_moves; k++)
+        {
+            if (possibleGains[k] > possibleGains[bestCandidate])
+                bestCandidate = k;
+        }
+
+        return_coordinates[0] = candidate_moves[bestCandidate][0];
+        return_coordinates[1] = candidate_moves[bestCandidate][1];
+        return_coordinates[2] = candidate_moves[bestCandidate][2];
+        return_coordinates[3] = candidate_moves[bestCandidate][3];
+
+        return possibleGains[bestCandidate];
+    }
 }
 
 // overloaded solver() used when returning the optimal move is not required
