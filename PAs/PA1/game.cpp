@@ -5,6 +5,8 @@
 using namespace std;
 
 bool matches[HEIGHT][WIDTH] = {};
+int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
+int num_candidate_moves = 0;
 
 void readMap(string filename, int map[][WIDTH])
 {
@@ -220,8 +222,92 @@ void copyMap(int map[][WIDTH], int map_copy[][WIDTH], int rows_to_copy)
  ***********************************************************************/
 int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate_moves)
 {
+    int maxScore = 0, scoreForThisSwap = 0;
+    num_candidate_moves = 0;
+    int exeCnt = -1;
 
-    return 0;
+    // empty the candidate_moves list
+    for (int i = 0; i < (HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT; i++)
+    {
+        for (int dummy = 0; dummy <= 3; dummy++)
+        {
+            candidate_moves[i][dummy] = 0;
+        }
+    }
+
+    // a list storing all possible scores of each possible swap for the given map
+    int possibleScores[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT] = {};
+
+    // first consider all horizontal swaps (right swaps)
+    for (int y_cor = 0; y_cor <= HEIGHT - 1; y_cor++)
+    {
+        for (int x_cor = 0; x_cor <= WIDTH - 2; x_cor++)
+        {
+            exeCnt++;
+            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
+            scoreForThisSwap = findMatches(map, matches);
+            possibleScores[exeCnt] = scoreForThisSwap;
+            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
+        }
+    }
+
+    // then consider all vertical swaps (up swaps)
+    for (int x_pos = 0; x_pos <= WIDTH - 1; x_pos++)
+    {
+        for (int y_pos = 0; y_pos <= HEIGHT - 2; y_pos++)
+        {
+            exeCnt++;
+            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
+            scoreForThisSwap = findMatches(map, matches);
+            possibleScores[exeCnt] = scoreForThisSwap;
+            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
+        }
+    }
+
+    // go through the list of possible scores to find the maxScore for the given map
+    for (int i = 0; i <= exeCnt - 1; i++)
+    {
+        if (possibleScores[i] > maxScore)
+            maxScore = possibleScores[i];
+    }
+
+    /* go through each swap again to find where does maxScore occur */
+    // first review all horizontal swaps (right swaps)
+    for (int y_cor = 0; y_cor <= HEIGHT - 1; y_cor++)
+    {
+        for (int x_cor = 0; x_cor <= WIDTH - 2; x_cor++)
+        {
+            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
+            if (findMatches(map, matches) == maxScore)
+            {
+                candidate_moves[num_candidate_moves][0] = x_cor;
+                candidate_moves[num_candidate_moves][1] = y_cor;
+                candidate_moves[num_candidate_moves][2] = x_cor + 1;
+                candidate_moves[num_candidate_moves][3] = y_cor;
+                num_candidate_moves++;
+            }
+            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
+        }
+    }
+    // then review all vertical swaps (up swaps)
+    for (int x_pos = 0; x_pos <= WIDTH - 1; x_pos++)
+    {
+        for (int y_pos = 0; y_pos <= HEIGHT - 2; y_pos++)
+        {
+            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
+            if (findMatches(map, matches) == maxScore)
+            {
+                candidate_moves[num_candidate_moves][0] = x_pos;
+                candidate_moves[num_candidate_moves][1] = y_pos;
+                candidate_moves[num_candidate_moves][2] = x_pos;
+                candidate_moves[num_candidate_moves][3] = y_pos + 1;
+                num_candidate_moves++;
+            }
+            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
+        }
+    }
+
+    return maxScore;
 }
 
 /***********************************************************************
