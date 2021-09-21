@@ -4,6 +4,8 @@
 
 using namespace std;
 
+int recursionCnt = 0;
+
 bool matches[HEIGHT][WIDTH] = {};
 //int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
 //int num_candidate_moves = 0;
@@ -226,6 +228,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
     int maxScore = 0, scoreForThisSwap = 0;
     num_candidate_moves = 0;
     int exeCnt = -1;
+    int map_copy[][WIDTH] = {};
 
     // empty the candidate_moves list
     for (int i = 0; i < (HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT; i++)
@@ -245,10 +248,11 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
         for (int x_cor = 0; x_cor <= WIDTH - 2; x_cor++)
         {
             exeCnt++;
-            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
-            scoreForThisSwap = findMatches(map, matches);
+            copyMap(map, map_copy, MAX_ROWS);
+            swapTiles(map_copy, x_cor, y_cor, x_cor + 1, y_cor);
+            scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
+            cout << "possible scores list filled " << exeCnt << " times" << endl;
         }
     }
 
@@ -258,15 +262,15 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
         for (int y_pos = 0; y_pos <= HEIGHT - 2; y_pos++)
         {
             exeCnt++;
-            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
-            scoreForThisSwap = findMatches(map, matches);
+            copyMap(map, map_copy, MAX_ROWS);
+            swapTiles(map_copy, x_pos, y_pos, x_pos, y_pos + 1);
+            scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
         }
     }
 
     // go through the list of possible scores to find the maxScore for the given map
-    for (int i = 0; i <= exeCnt - 1; i++)
+    for (int i = 0; i <= exeCnt; i++)
     {
         if (possibleScores[i] > maxScore)
             maxScore = possibleScores[i];
@@ -278,8 +282,9 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
     {
         for (int x_cor = 0; x_cor <= WIDTH - 2; x_cor++)
         {
-            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
-            if (findMatches(map, matches) == maxScore)
+            copyMap(map, map_copy, MAX_ROWS);
+            swapTiles(map_copy, x_cor, y_cor, x_cor + 1, y_cor);
+            if (processMatches(map_copy) == maxScore)
             {
                 candidate_moves[num_candidate_moves][0] = x_cor;
                 candidate_moves[num_candidate_moves][1] = y_cor;
@@ -287,7 +292,6 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
                 candidate_moves[num_candidate_moves][3] = y_cor;
                 num_candidate_moves++;
             }
-            swapTiles(map, x_cor, y_cor, x_cor + 1, y_cor);
         }
     }
     // then review all vertical swaps (up swaps)
@@ -295,8 +299,9 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
     {
         for (int y_pos = 0; y_pos <= HEIGHT - 2; y_pos++)
         {
-            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
-            if (findMatches(map, matches) == maxScore)
+            copyMap(map, map_copy, MAX_ROWS);
+            swapTiles(map_copy, x_pos, y_pos, x_pos, y_pos + 1);
+            if (processMatches(map_copy) == maxScore)
             {
                 candidate_moves[num_candidate_moves][0] = x_pos;
                 candidate_moves[num_candidate_moves][1] = y_pos;
@@ -304,9 +309,11 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
                 candidate_moves[num_candidate_moves][3] = y_pos + 1;
                 num_candidate_moves++;
             }
-            swapTiles(map, x_pos, y_pos, x_pos, y_pos + 1);
         }
     }
+    cout << "exeCNT is " << exeCnt << endl; // this should always be 143 (in total 144 possible moves)
+    cout << "max score is " << maxScore << endl;
+    cout << "num of candidate is " << num_candidate_moves << endl;
 
     return maxScore;
 }
@@ -323,6 +330,7 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 
     if (num_candidate_moves == 1)
     {
+        //cout << "1st situation" << endl;
         return_coordinates[0] = candidate_moves[0][0];
         return_coordinates[1] = candidate_moves[0][1];
         return_coordinates[2] = candidate_moves[0][2];
@@ -332,11 +340,13 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 
     else if (num_candidate_moves == 0)
     {
+        //cout << "2nd situation" << endl;
         return 0;
     }
 
     else
     {
+        //cout << "enter 3 " << recursionCnt++ << " candidate cnt" << num_candidate_moves << endl;
         int map_copy[][WIDTH] = {};
         int possibleGains[num_candidate_moves] = {};
         for (int candidate = 0; candidate < num_candidate_moves; candidate++)
@@ -344,6 +354,7 @@ int solver(int map[][WIDTH], int return_coordinates[4])
             int subOptimalGain = 0;
             copyMap(map, map_copy, MAX_ROWS);
             swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
+            processMatches(map_copy);
             subOptimalGain += solver(map_copy);
             possibleGains[candidate] = subOptimalGain;
         }
