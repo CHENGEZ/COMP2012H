@@ -252,7 +252,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             swapTiles(map_copy, x_cor, y_cor, x_cor + 1, y_cor);
             scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-            cout << possibleScores[exeCnt] << "(" << exeCnt << ") ";
+            cout << possibleScores[exeCnt] << " ";
         }
     }
 
@@ -266,7 +266,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             swapTiles(map_copy, x_pos, y_pos, x_pos, y_pos + 1);
             scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-            cout << possibleScores[exeCnt] << "(" << exeCnt << ") ";
+            cout << possibleScores[exeCnt] << " ";
         }
     }
 
