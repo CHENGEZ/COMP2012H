@@ -228,7 +228,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
     int maxScore = 0, scoreForThisSwap = 0;
     num_candidate_moves = 0;
     int exeCnt = -1;
-    int map_copy[][WIDTH] = {};
+    int map_copy[MAX_ROWS][WIDTH] = {};
 
     // empty the candidate_moves list
     for (int i = 0; i < (HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT; i++)
@@ -252,8 +252,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             swapTiles(map_copy, x_cor, y_cor, x_cor + 1, y_cor);
             scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-
-            cout << "successfully passes when y = " << y_cor << " x = " << x_cor << endl;
+            cout << possibleScores[exeCnt] << "(" << exeCnt << ") ";
         }
     }
 
@@ -267,9 +266,18 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             swapTiles(map_copy, x_pos, y_pos, x_pos, y_pos + 1);
             scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
+            cout << possibleScores[exeCnt] << "(" << exeCnt << ") ";
         }
     }
-    cout << "exeCNT is " << exeCnt << endl; // this should always be 143 (in total 144 possible moves)
+
+    cout << "\n"
+         << endl;
+    for (int swap = 0; swap < 144; swap++)
+    {
+        cout << possibleScores[swap] << " ";
+    }
+
+    cout << "\n exeCNT is " << exeCnt << endl; // this should always be 143 (in total 144 possible moves)
     // go through the list of possible scores to find the maxScore for the given map
     for (int i = 0; i <= exeCnt; i++)
     {
@@ -329,21 +337,28 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 
     int optimalGain = considerMoves(map, candidate_moves, num_candidate_moves);
 
-    if (num_candidate_moves == 1)
-    {
-        //cout << "1st situation" << endl;
-        return_coordinates[0] = candidate_moves[0][0];
-        return_coordinates[1] = candidate_moves[0][1];
-        return_coordinates[2] = candidate_moves[0][2];
-        return_coordinates[3] = candidate_moves[0][3];
-        return optimalGain;
-    }
+    return_coordinates[0] = 1;
+    return_coordinates[1] = 0;
+    return_coordinates[2] = 2;
+    return_coordinates[3] = 0;
 
-    else if (num_candidate_moves == 0)
-    {
-        //cout << "2nd situation" << endl;
-        return 0;
-    }
+    return 0;
+
+    // if (num_candidate_moves == 1)
+    // {
+    //     //cout << "1st situation" << endl;
+    //     return_coordinates[0] = candidate_moves[0][0];
+    //     return_coordinates[1] = candidate_moves[0][1];
+    //     return_coordinates[2] = candidate_moves[0][2];
+    //     return_coordinates[3] = candidate_moves[0][3];
+    //     return optimalGain;
+    // }
+
+    // else if (num_candidate_moves == 0)
+    // {
+    //     //cout << "2nd situation" << endl;
+    //     return 0;
+    // }
 
     // else //num_candidate_moves > 1
     // {
@@ -375,7 +390,6 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 
     //     return possibleGains[bestCandidate];
     // }
-    return 0;
 }
 
 // overloaded solver() used when returning the optimal move is not required
