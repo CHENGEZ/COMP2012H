@@ -240,7 +240,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
     }
 
     // a list storing all possible scores of each possible swap for the given map
-    int possibleScores[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT] = {};
+    int possibleScores[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT] = {}; // in total 144
 
     // first consider all horizontal swaps (right swaps)
     for (int y_cor = 0; y_cor <= HEIGHT - 1; y_cor++)
@@ -252,7 +252,8 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             swapTiles(map_copy, x_cor, y_cor, x_cor + 1, y_cor);
             scoreForThisSwap = processMatches(map_copy);
             possibleScores[exeCnt] = scoreForThisSwap;
-            cout << "possible scores list filled " << exeCnt << " times" << endl;
+
+            cout << "successfully passes when y = " << y_cor << " x = " << x_cor << endl;
         }
     }
 
@@ -268,14 +269,14 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             possibleScores[exeCnt] = scoreForThisSwap;
         }
     }
-
+    cout << "exeCNT is " << exeCnt << endl; // this should always be 143 (in total 144 possible moves)
     // go through the list of possible scores to find the maxScore for the given map
     for (int i = 0; i <= exeCnt; i++)
     {
         if (possibleScores[i] > maxScore)
             maxScore = possibleScores[i];
     }
-
+    cout << "max score is " << maxScore << endl;
     /* go through each swap again to find where does maxScore occur */
     // first review all horizontal swaps (right swaps)
     for (int y_cor = 0; y_cor <= HEIGHT - 1; y_cor++)
@@ -311,8 +312,7 @@ int considerMoves(int map[][WIDTH], int candidate_moves[][4], int &num_candidate
             }
         }
     }
-    cout << "exeCNT is " << exeCnt << endl; // this should always be 143 (in total 144 possible moves)
-    cout << "max score is " << maxScore << endl;
+
     cout << "num of candidate is " << num_candidate_moves << endl;
 
     return maxScore;
@@ -325,6 +325,7 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 {
     int candidate_moves[(HEIGHT - 1) * WIDTH + (WIDTH - 1) * HEIGHT][4] = {};
     int num_candidate_moves = 0;
+    int map_copy[][WIDTH] = {};
 
     int optimalGain = considerMoves(map, candidate_moves, num_candidate_moves);
 
@@ -344,36 +345,37 @@ int solver(int map[][WIDTH], int return_coordinates[4])
         return 0;
     }
 
-    else
-    {
-        //cout << "enter 3 " << recursionCnt++ << " candidate cnt" << num_candidate_moves << endl;
-        int map_copy[][WIDTH] = {};
-        int possibleGains[num_candidate_moves] = {};
-        for (int candidate = 0; candidate < num_candidate_moves; candidate++)
-        {
-            int subOptimalGain = 0;
-            copyMap(map, map_copy, MAX_ROWS);
-            swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
-            processMatches(map_copy);
-            subOptimalGain += solver(map_copy);
-            possibleGains[candidate] = subOptimalGain;
-        }
+    // else //num_candidate_moves > 1
+    // {
+    //     //cout << "enter 3 " << recursionCnt++ << " candidate cnt" << num_candidate_moves << endl;
+    //
+    //     int possibleGains[num_candidate_moves] = {};
+    //     for (int candidate = 0; candidate < num_candidate_moves; candidate++)
+    //     {
+    //         int subOptimalGain = 0;
+    //         copyMap(map, map_copy, MAX_ROWS);
+    //         swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
+    //         processMatches(map_copy);
+    //         subOptimalGain += solver(map_copy);
+    //         possibleGains[candidate] = subOptimalGain;
+    //     }
 
-        int bestCandidate = 0;
+    //     int bestCandidate = 0;
 
-        for (int k = 0; k < num_candidate_moves; k++)
-        {
-            if (possibleGains[k] > possibleGains[bestCandidate])
-                bestCandidate = k;
-        }
+    //     for (int k = 0; k < num_candidate_moves; k++)
+    //     {
+    //         if (possibleGains[k] > possibleGains[bestCandidate])
+    //             bestCandidate = k;
+    //     }
 
-        return_coordinates[0] = candidate_moves[bestCandidate][0];
-        return_coordinates[1] = candidate_moves[bestCandidate][1];
-        return_coordinates[2] = candidate_moves[bestCandidate][2];
-        return_coordinates[3] = candidate_moves[bestCandidate][3];
+    //     return_coordinates[0] = candidate_moves[bestCandidate][0];
+    //     return_coordinates[1] = candidate_moves[bestCandidate][1];
+    //     return_coordinates[2] = candidate_moves[bestCandidate][2];
+    //     return_coordinates[3] = candidate_moves[bestCandidate][3];
 
-        return possibleGains[bestCandidate];
-    }
+    //     return possibleGains[bestCandidate];
+    // }
+    return 0;
 }
 
 // overloaded solver() used when returning the optimal move is not required
