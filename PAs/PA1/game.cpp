@@ -354,10 +354,10 @@ int solver(int map[][WIDTH], int return_coordinates[4])
     int num_candidate_moves = 0, best_candidate_index = 0;
     int map_copy[MAX_ROWS][WIDTH] = {};
 
-    int optimalGain = considerMoves(map, candidate_moves, num_candidate_moves);
+    int optimalGainForOneSwap = considerMoves(map, candidate_moves, num_candidate_moves);
 
-    cout << "max score is " << optimalGain << endl;
-    cout << "num of candidate is " << num_candidate_moves << ", they are:" << endl;
+    cout << "max possible score is " << optimalGainForOneSwap << endl;
+    cout << "num of candidates that can achieve this score is " << num_candidate_moves << ", they are:" << endl;
     for (int i = 0; i < num_candidate_moves; i++)
     {
         cout << candidate_moves[i][0] << candidate_moves[i][1] << candidate_moves[i][2] << candidate_moves[i][3] << endl;
@@ -365,44 +365,42 @@ int solver(int map[][WIDTH], int return_coordinates[4])
 
     if (num_candidate_moves == 1)
     {
-        //cout << "1st situation" << endl;
         return_coordinates[0] = candidate_moves[0][0];
         return_coordinates[1] = candidate_moves[0][1];
         return_coordinates[2] = candidate_moves[0][2];
         return_coordinates[3] = candidate_moves[0][3];
-        //return optimalGain;
+        //return optimalGainForOneSwap;
     }
 
     else if (num_candidate_moves == 0)
     {
-        //cout << "2nd situation" << endl;
         return_coordinates = {};
         return 0;
     }
 
     else // num_candidate_moves > 0
     {
-        int possibleGains[num_candidate_moves] = {};
-        int subOptimalGain = 0;
-        for (int candidate = 0; candidate < num_candidate_moves; candidate++)
+        int possibleSubGains[num_candidate_moves] = {};
+        int subOptimalGainForOneSwap = 0;
+        for (int candidate = 0; candidate < num_candidate_moves; candidate++) // for every candidate moves, execute the swap
         {
             copyMap(map, map_copy, MAX_ROWS);
             swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
             cout << "executed " << candidate_moves[candidate][0] << candidate_moves[candidate][1] << candidate_moves[candidate][2] << candidate_moves[candidate][3] << endl;
-            possibleGains[candidate] = solver(map_copy);
+            possibleSubGains[candidate] = solver(map_copy);
         }
-        subOptimalGain = maxValueInArray(possibleGains, num_candidate_moves);
-        optimalGain += subOptimalGain;
-        best_candidate_index = indexWhereFirstMaxOccur(possibleGains, num_candidate_moves, subOptimalGain);
+        subOptimalGainForOneSwap = maxValueInArray(possibleSubGains, num_candidate_moves);
+        optimalGainForOneSwap += subOptimalGainForOneSwap;
+        best_candidate_index = indexWhereFirstMaxOccur(possibleSubGains, num_candidate_moves, subOptimalGainForOneSwap);
         return_coordinates[0] = candidate_moves[best_candidate_index][0];
         return_coordinates[1] = candidate_moves[best_candidate_index][1];
         return_coordinates[2] = candidate_moves[best_candidate_index][2];
         return_coordinates[3] = candidate_moves[best_candidate_index][3];
-        //return optimalGain;
+        //return optimalGainForOneSwap;
     }
 
-    // cout << "optimal gain for this solve is " << optimalGain << endl;
-    return optimalGain;
+    // cout << "optimal gain for this solve is " << optimalGainForOneSwap << endl;
+    return optimalGainForOneSwap;
 }
 
 // overloaded solver() used when returning the optimal move is not required
