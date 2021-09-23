@@ -371,13 +371,11 @@ int solver(int map[][WIDTH], int return_coordinates[4])
         return_coordinates[3] = candidate_moves[0][3];
         return optimalGainForOneSwap;
     }
-
     else if (num_candidate_moves == 0)
     {
         return_coordinates = {};
         return 0;
     }
-
     else // num_candidate_moves > 0
     {
         int possibleSubGains[num_candidate_moves] = {};
@@ -386,6 +384,7 @@ int solver(int map[][WIDTH], int return_coordinates[4])
         {
             copyMap(map, map_copy, MAX_ROWS);
             swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
+            processMatches(map_copy);
             cout << "executed " << candidate_moves[candidate][0] << candidate_moves[candidate][1] << candidate_moves[candidate][2] << candidate_moves[candidate][3] << endl;
             possibleSubGains[candidate] = solver(map_copy);
         }
