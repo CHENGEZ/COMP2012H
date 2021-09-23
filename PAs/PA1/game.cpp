@@ -378,9 +378,10 @@ int solver(int map[][WIDTH], int return_coordinates[4])
     }
     else // num_candidate_moves > 0
     {
-        int possibleSubGains[num_candidate_moves] = {};
+        const int num_candidate_moves_const = num_candidate_moves;
+        int possibleSubGains[num_candidate_moves_const] = {};
         int subOptimalGainForOneSwap = 0;
-        for (int candidate = 0; candidate < num_candidate_moves; candidate++) // for every candidate moves, execute the swap
+        for (int candidate = 0; candidate < num_candidate_moves_const; candidate++) // for every candidate moves, execute the swap
         {
             copyMap(map, map_copy, MAX_ROWS);
             swapTiles(map_copy, candidate_moves[candidate][0], candidate_moves[candidate][1], candidate_moves[candidate][2], candidate_moves[candidate][3]);
@@ -388,9 +389,9 @@ int solver(int map[][WIDTH], int return_coordinates[4])
             //cout << "executed " << candidate_moves[candidate][0] << candidate_moves[candidate][1] << candidate_moves[candidate][2] << candidate_moves[candidate][3] << endl;
             possibleSubGains[candidate] = solver(map_copy);
         }
-        subOptimalGainForOneSwap = maxValueInArray(possibleSubGains, num_candidate_moves);
+        subOptimalGainForOneSwap = maxValueInArray(possibleSubGains, num_candidate_moves_const);
         optimalGainForOneSwap += subOptimalGainForOneSwap;
-        best_candidate_index = indexWhereFirstMaxOccur(possibleSubGains, num_candidate_moves, subOptimalGainForOneSwap);
+        best_candidate_index = indexWhereFirstMaxOccur(possibleSubGains, num_candidate_moves_const, subOptimalGainForOneSwap);
         return_coordinates[0] = candidate_moves[best_candidate_index][0];
         return_coordinates[1] = candidate_moves[best_candidate_index][1];
         return_coordinates[2] = candidate_moves[best_candidate_index][2];
