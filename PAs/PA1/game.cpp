@@ -369,7 +369,7 @@ int solver(int map[][WIDTH], int return_coordinates[4])
         return_coordinates[1] = candidate_moves[0][1];
         return_coordinates[2] = candidate_moves[0][2];
         return_coordinates[3] = candidate_moves[0][3];
-        //return optimalGainForOneSwap;
+        return optimalGainForOneSwap;
     }
 
     else if (num_candidate_moves == 0)
@@ -396,11 +396,8 @@ int solver(int map[][WIDTH], int return_coordinates[4])
         return_coordinates[1] = candidate_moves[best_candidate_index][1];
         return_coordinates[2] = candidate_moves[best_candidate_index][2];
         return_coordinates[3] = candidate_moves[best_candidate_index][3];
-        //return optimalGainForOneSwap;
+        return optimalGainForOneSwap;
     }
-
-    // cout << "optimal gain for this solve is " << optimalGainForOneSwap << endl;
-    return optimalGainForOneSwap;
 }
 
 // overloaded solver() used when returning the optimal move is not required
