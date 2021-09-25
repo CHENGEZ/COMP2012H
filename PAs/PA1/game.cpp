@@ -373,7 +373,6 @@ int solver(int map[][WIDTH], int return_coordinates[4])
     }
     else if (num_candidate_moves == 0)
     {
-        return_coordinates = {};
         return 0;
     }
     else // num_candidate_moves > 0
