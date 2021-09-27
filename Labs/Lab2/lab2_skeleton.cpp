@@ -10,31 +10,34 @@ const int PATTERN_SIZE = 8;
 const int WIDTH = 60;
 const int HEIGHT = 15;
 
-int initialState[WIDTH];    // the initial state
-int grid[HEIGHT][WIDTH];    // the grid for display
-int rule[PATTERN_SIZE];     // the rule in binary, 1 bit per array element
-int curRow;                 // current row
-int curStep;                // current step
-int ruleNum;                // rule number in decimal
-
+int initialState[WIDTH]; // the initial state
+int grid[HEIGHT][WIDTH]; // the grid for display
+int rule[PATTERN_SIZE];  // the rule in binary, 1 bit per array element
+int curRow;              // current row
+int curStep;             // current step
+int ruleNum;             // rule number in decimal
 
 const unsigned long MAX_RAND = 0x80000000;
 static unsigned long rng_lab1 = 0;
-static void _srand(unsigned long seed) {
+static void _srand(unsigned long seed)
+{
     rng_lab1 = seed;
 }
 
-static unsigned long _rand() {
+static unsigned long _rand()
+{
     rng_lab1 = (1103515245 * rng_lab1 + 12345) % (1 << 31);
     return rng_lab1 & 0x7FFFFFFF;
 }
 
-int getRandNum(double probability) {
+int getRandNum(double probability)
+{
     unsigned long threshold = probability * MAX_RAND;
     return _rand() < threshold ? 1 : 0;
 }
 
-void initRule() {
+void initRule()
+{
 
     //
     // TODO: task 1.1, initialize the rule
@@ -45,10 +48,10 @@ void initRule() {
     //
     // Your code here
     //
-
 }
 
-void initStateFromInput() {
+void initStateFromInput()
+{
 
     //
     // TODO: task 1.2, initialize the initial state from user input
@@ -58,10 +61,10 @@ void initStateFromInput() {
     //
     // Your code here
     //
-
 }
 
-void initStateRandomly() {
+void initStateRandomly()
+{
 
     //
     // TODO: task 1.3, initialize the initial state randomly
@@ -70,12 +73,12 @@ void initStateRandomly() {
     //
     // Your code here
     //
-
 }
 
-int getNeighbourState(int row, int col) {
+int getNeighbourState(int row, int col)
+{
 
-    // 
+    //
     // TODO: task 2.1, get a decimal number repersenting the current state of the neighbours
     // Compute the state of the neighbours with respect to the given row and col
     // Wrap around the boundaries if necessary
@@ -86,7 +89,8 @@ int getNeighbourState(int row, int col) {
     return 0;
 }
 
-void update() {
+void update()
+{
 
     //
     // TODO: task 2.2, update to the next state
@@ -96,43 +100,50 @@ void update() {
     //
     // Your code here
     //
-
 }
 
-void getState(int step) {
+void getState(int step)
+{
 
     //
     // TODO: task 2.3, get the state of the automaton after given steps
     // Modify grid[][] so that its content represents the state of the automaton
     // after the given number of steps
-    // 
+    //
     // Your code here
     //
-
 }
 
-void initState() {
+void initState()
+{
     cout << "Please specify the initial state. 'R' for random generation, 'M' for manual input." << endl;
     char mode;
     cin >> mode;
-    while (mode != 'R' && mode != 'M') {
+    while (mode != 'R' && mode != 'M')
+    {
         cout << "Invalid mode, please enter 'R' or 'M':" << endl;
         cin >> mode;
     }
 
-    if (mode == 'R') {
+    if (mode == 'R')
+    {
         initStateRandomly();
-    } else {
+    }
+    else
+    {
         initStateFromInput();
     }
 }
 
-void displayGrid() {
+void displayGrid()
+{
     cout << "State of rule " << ruleNum << " after " << curStep << " steps:" << endl;
     cout << std::string(WIDTH, '=') << endl;
 
-    for (int i = 0; i < HEIGHT; ++i) {
-        for (int j = 0; j < WIDTH; ++j) {
+    for (int i = 0; i < HEIGHT; ++i)
+    {
+        for (int j = 0; j < WIDTH; ++j)
+        {
             cout << (grid[i][j] ? '@' : ' ');
         }
         cout << endl;
@@ -141,7 +152,8 @@ void displayGrid() {
     cout << std::string(WIDTH, '=') << endl;
 }
 
-int main() {
+int main()
+{
     _srand(2012);
 
     cout << "Elementary Cellular Automaton" << endl;
@@ -149,16 +161,19 @@ int main() {
     initState();
     displayGrid();
 
-    while (true) {
+    while (true)
+    {
         cout << "Please specify the number of steps" << endl;
         int step;
         cin >> step;
 
-        if (step == -1) {
+        if (step == -1)
+        {
             break;
         }
 
-        if (step < 0) {
+        if (step < 0)
+        {
             cout << "Invalid step" << endl;
             continue;
         }
