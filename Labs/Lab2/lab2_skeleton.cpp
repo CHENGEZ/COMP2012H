@@ -16,6 +16,7 @@ int rule[PATTERN_SIZE];  // the rule in binary, 1 bit per array element
 int curRow;              // current row
 int curStep;             // current step
 int ruleNum;             // rule number in decimal
+int tempRuleNum;         // for binary conversion
 
 const unsigned long MAX_RAND = 0x80000000;
 static unsigned long rng_lab1 = 0;
@@ -36,6 +37,16 @@ int getRandNum(double probability)
     return _rand() < threshold ? 1 : 0;
 }
 
+bool checkArrForExsistingItem(int array[], int size, int item)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (array[i] == item)
+            return true;
+    }
+    return false;
+}
+
 void initRule()
 {
 
@@ -48,6 +59,23 @@ void initRule()
     //
     // Your code here
     //
+    while (1)
+    {
+        cout << "Please specify the number of steps" << endl;
+        cin >> ruleNum;
+        if (ruleNum >= 0 && ruleNum <= 255)
+            break;
+        cout << "Invalid rule number, please retry:" << endl;
+    }
+
+    tempRuleNum = ruleNum;
+
+    // converting the number into binary and storing in to rule[PATTERN_SIZE]
+    for (int i = 0; i < PATTERN_SIZE; i++)
+    {
+        rule[i] = tempRuleNum % 2;
+        tempRuleNum /= 2;
+    }
 }
 
 void initStateFromInput()
@@ -61,6 +89,46 @@ void initStateFromInput()
     //
     // Your code here
     //
+    int num_of_cells_alive_initially = 0;
+    int enteredColums[WIDTH] = {};
+    for (int i = 0; i <= 60; i++)
+    {
+        enteredColums[i] = -5;
+    }
+
+    int colum = 0;
+    cout << "Please enter the number of cells alive in the initial state:" << endl;
+    while (1)
+    {
+        cin >> num_of_cells_alive_initially;
+        if (num_of_cells_alive_initially > 0 && num_of_cells_alive_initially <= WIDTH)
+        {
+            break;
+        }
+
+        cout << "Invalid number of living cells, please retry:" << endl;
+    }
+
+    cout << "Please enter the column at which the cells are alive:" << endl;
+
+    for (int i = 0; i < num_of_cells_alive_initially; i++)
+    {
+        cin >> colum;
+        if (colum < 0 || colum > WIDTH - 1)
+        {
+            cout << "Column out of bound" << endl;
+            i--;
+            continue;
+        }
+        if (checkArrForExsistingItem(enteredColums, WIDTH, colum))
+        {
+            cout << "Column duplicated" << endl;
+            i--;
+            continue;
+        }
+        initialState[colum] = 1;
+        grid[0][colum] = 1;
+    }
 }
 
 void initStateRandomly()
@@ -73,6 +141,24 @@ void initStateRandomly()
     //
     // Your code here
     //
+    float inputProb;
+
+    cout << "Please enter the fill rate:" << endl;
+    while (1)
+    {
+        cin >> inputProb;
+        if (inputProb >= 0 && inputProb <= 1)
+        {
+            break;
+        }
+        cout << "Invalid probability, please retry:" << endl;
+    }
+
+    for (int i = 0; i < WIDTH; i++)
+    {
+        grid[0][i] = getRandNum(inputProb);
+        initialState[i] = getRandNum(inputProb);
+    }
 }
 
 int getNeighbourState(int row, int col)
@@ -85,8 +171,20 @@ int getNeighbourState(int row, int col)
     //
     // Your code here
     //
+    int middleDig, leftDig, rightDig = 0;
+    middleDig = grid[row][col];
+    leftDig = col >= 1 ? grid[row][col - 1] : grid[row][WIDTH - 1];
+    rightDig = col < WIDTH - 1 ? grid[row][col + 1] : grid[row][0];
 
-    return 0;
+    int returnValue = 0;
+    if (rightDig)
+        returnValue += 1;
+    if (middleDig)
+        returnValue += 2;
+    if (leftDig)
+        returnValue += 4;
+
+    return returnValue;
 }
 
 void update()
@@ -100,6 +198,17 @@ void update()
     //
     // Your code here
     //
+    int nextState[WIDTH] = {};
+    int nextRow = 0;
+    for (int i = 0; i < WIDTH; i++)
+    {
+        nextState[i] = rule[7 - getNeighbourState(curRow, i)];
+    }
+    if (curRow == HEIGHT - 1)
+        nextRow = 0;
+    else
+        nextRow = curRow + 1;
+    curRow = nextRow;
 }
 
 void getState(int step)
