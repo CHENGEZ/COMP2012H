@@ -61,7 +61,7 @@ void initRule()
     //
     while (1)
     {
-        cout << "Please specify the number of steps" << endl;
+        cout << "Please enter the rule number:" << endl;
         cin >> ruleNum;
         if (ruleNum >= 0 && ruleNum <= 255)
             break;
@@ -209,6 +209,12 @@ void update()
     else
         nextRow = curRow + 1;
     curRow = nextRow;
+    curRow %= HEIGHT;
+    curStep++;
+    for (int i = 0; i < WIDTH; i++)
+    {
+        grid[curRow][i] = nextState[i];
+    }
 }
 
 void getState(int step)
@@ -221,6 +227,19 @@ void getState(int step)
     //
     // Your code here
     //
+    if (step < curStep)
+    {
+        curStep = curRow = 0;
+        for (int i = 0; i < WIDTH; i++)
+        {
+            grid[curRow][i] = initialState[i];
+        }
+    }
+
+    while (step >= curStep)
+    {
+        update();
+    }
 }
 
 void initState()
