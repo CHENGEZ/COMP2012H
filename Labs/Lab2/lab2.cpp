@@ -143,7 +143,7 @@ void initStateRandomly()
     //
     // Your code here
     //
-    float inputProb;
+    double inputProb;
 
     cout << "Please enter the fill rate:" << endl;
     while (1)
