@@ -5,6 +5,7 @@
 using std::cin;
 using std::cout;
 using std::endl;
+using std::swap;
 
 const int PATTERN_SIZE = 8;
 const int WIDTH = 60;
@@ -59,9 +60,9 @@ void initRule()
     //
     // Your code here
     //
+    cout << "Please enter the rule number:" << endl;
     while (1)
     {
-        cout << "Please enter the rule number:" << endl;
         cin >> ruleNum;
         if (ruleNum >= 0 && ruleNum <= 255)
             break;
@@ -128,6 +129,7 @@ void initStateFromInput()
         }
         initialState[colum] = 1;
         grid[0][colum] = 1;
+        enteredColums[i] = colum;
     }
 }
 
@@ -177,11 +179,11 @@ int getNeighbourState(int row, int col)
     rightDig = col < WIDTH - 1 ? grid[row][col + 1] : grid[row][0];
 
     int returnValue = 0;
-    if (rightDig)
+    if (rightDig == 1)
         returnValue += 1;
-    if (middleDig)
+    if (middleDig == 1)
         returnValue += 2;
-    if (leftDig)
+    if (leftDig == 1)
         returnValue += 4;
 
     return returnValue;
@@ -202,19 +204,19 @@ void update()
     int nextRow = 0;
     for (int i = 0; i < WIDTH; i++)
     {
-        nextState[i] = rule[7 - getNeighbourState(curRow, i)];
+        nextState[i] = rule[getNeighbourState(curRow, i)];
     }
     if (curRow == HEIGHT - 1)
         nextRow = 0;
     else
         nextRow = curRow + 1;
-    curRow = nextRow;
-    curRow %= HEIGHT;
-    curStep++;
+
     for (int i = 0; i < WIDTH; i++)
     {
-        grid[curRow][i] = nextState[i];
+        grid[nextRow][i] = nextState[i];
     }
+    curRow = nextRow;
+    curStep++;
 }
 
 void getState(int step)
@@ -230,13 +232,21 @@ void getState(int step)
     if (step < curStep)
     {
         curStep = curRow = 0;
+        for (int eachRow = 0; eachRow < HEIGHT; eachRow++)
+        {
+            for (int eachCol = 0; eachCol < WIDTH; eachCol++)
+            {
+                grid[eachRow][eachCol] = 0;
+            }
+        }
+
         for (int i = 0; i < WIDTH; i++)
         {
             grid[curRow][i] = initialState[i];
         }
     }
 
-    while (step >= curStep)
+    while (step > curStep)
     {
         update();
     }
