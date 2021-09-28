@@ -143,13 +143,13 @@ void initStateRandomly()
     //
     // Your code here
     //
-    double inputProb;
+    double inputProb = 0;
 
     cout << "Please enter the fill rate:" << endl;
     while (1)
     {
         cin >> inputProb;
-        if (inputProb >= 0 && inputProb <= 1)
+        if (inputProb >= 0.0 && inputProb <= 1.0)
         {
             break;
         }
@@ -158,8 +158,9 @@ void initStateRandomly()
 
     for (int i = 0; i < WIDTH; i++)
     {
-        grid[0][i] = getRandNum(inputProb);
-        initialState[i] = getRandNum(inputProb);
+        int fill = getRandNum(inputProb);
+        grid[0][i] = fill;
+        initialState[i] = fill;
     }
 }
 
