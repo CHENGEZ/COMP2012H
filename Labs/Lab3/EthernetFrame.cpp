@@ -53,10 +53,10 @@ void swapFrames(EthernetFrame *frame1, EthernetFrame *frame2)
 EthernetFrame *createFrame(const string &source, const string &destination, const string &payload, EtherType type)
 {
     EthernetFrame *frame = new EthernetFrame;
-    *frame->destination = destination;
-    *frame->source = source;
-    *frame->payload = payload;
-    *frame->type = type;
+    frame->destination = destination;
+    frame->source = source;
+    frame->payload = payload;
+    frame->type = type;
     return frame;
 }
 
