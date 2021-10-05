@@ -76,9 +76,9 @@ const EthernetFrame *queueBack(const Queue &queue)
 bool queueIsEmpty(const Queue &queue)
 {
     if (queue.size > 0)
-        return true;
-    else
         return false;
+    else
+        return true;
 }
 
 void freeQueue(Queue &queue)
