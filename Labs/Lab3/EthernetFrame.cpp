@@ -21,10 +21,10 @@ void initFrame(EthernetFrame *frame, const string &source, const string &destina
 {
     if (frame == nullptr)
         return;
-    *frame.source = source;
-    *frame.destination = destination;
-    *frame.payload = payload;
-    *frame.type = type;
+    (*frame).source = source;
+    (*frame).destination = destination;
+    (*frame).payload = payload;
+    (*frame).type = type;
     return;
 }
 
