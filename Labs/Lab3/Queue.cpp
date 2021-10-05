@@ -4,32 +4,40 @@
 
 #include "Queue.h"
 #include "EthernetFrame.h"
+#include <iostream>
 
 // TODO: task 3: queue operations
 
 void queueResizeRing(Queue &queue, unsigned int newCapacity)
 {
+
     EthernetFrame **newArr = new EthernetFrame *[newCapacity];
+
     int shortage = 0;
+    int back = queue.capacity == 0 ? 0 : (queue.head + queue.size - 1) % queue.capacity;
+    int deleteCnt = 0, deleteIndex = 0;
+
     if (newCapacity < queue.size)
     {
         shortage = queue.size - newCapacity;
-        for (int i = newCapacity; i < shortage; i++)
+        while (deleteCnt < shortage)
         {
-            delete queue.ring[i];
+            deleteIndex = back - deleteCnt >= 0 ? back - deleteCnt : queue.capacity + (back - deleteCnt);
+            freeFrame(queue.ring[deleteIndex]);
+            deleteCnt++;
         }
     }
-    else
+
+    int newSize = newCapacity <= queue.size ? newCapacity : queue.size;
+    for (int i = 0; i < newSize; i++)
     {
-        for (int i = 0; i < queue.size; i++)
-        {
-            newArr[i] = queue.ring[i];
-        }
+        newArr[i] = queue.ring[(queue.head + i) % queue.capacity];
     }
 
     queue.ring = newArr;
     queue.capacity = newCapacity;
-    queue.size = newCapacity < queue.size ? newCapacity : queue.size;
+    queue.size = newSize;
+    queue.head = 0;
 
     return;
 }
@@ -40,8 +48,8 @@ void enqueue(Queue &queue, EthernetFrame *frame)
     {
         queueResizeRing(queue, (queue.size + 1) * 2);
     }
-
-    queue.ring[queue.size] = frame;
+    queue.ring[(queue.head + queue.size - 1) % queue.capacity] = frame;
+    queue.size++;
     return;
 }
 
@@ -51,9 +59,9 @@ void dequeue(Queue &queue)
         return;
     else
     {
-        freeFrame(queue.ring[0]);
-        queue.ring[0] = nullptr;
+        freeFrame(queue.ring[queue.head]);
     }
+    queue.size--;
     return;
 }
 
@@ -62,7 +70,7 @@ const EthernetFrame *queueFront(const Queue &queue)
     if (queue.size == 0)
         return nullptr;
     else
-        return queue.ring[0];
+        return queue.ring[queue.head];
 }
 
 const EthernetFrame *queueBack(const Queue &queue)
@@ -70,7 +78,7 @@ const EthernetFrame *queueBack(const Queue &queue)
     if (queue.size == 0)
         return nullptr;
     else
-        return queue.ring[queue.size - 1];
+        return queue.ring[(queue.head + queue.size - 1) % queue.capacity];
 }
 
 bool queueIsEmpty(const Queue &queue)
@@ -86,10 +94,10 @@ void freeQueue(Queue &queue)
     int curSize = queue.size;
     for (int i = 0; i < curSize; i++)
     {
-        delete queue.ring[i];
-        queue.ring[i] = nullptr;
+        freeFrame(queue.ring[i]);
         queue.size--;
     }
+    queue.head = 0;
 
     return;
 }
