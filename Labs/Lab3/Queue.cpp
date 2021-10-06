@@ -45,7 +45,7 @@ void queueResizeRing(Queue &queue, unsigned int newCapacity)
         indexInOldRing = queue.head + i;
         while (indexInOldRing > queue.capacity - 1)
         {
-            indexInOldRing += queue.capacity;
+            indexInOldRing -= queue.capacity;
         }
         newRing[i] = queue.ring[indexInOldRing];
     }
