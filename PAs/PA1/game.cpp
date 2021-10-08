@@ -207,8 +207,8 @@ int processMatches(int map[][WIDTH])
                     for (int index = y_pos; index <= MAX_ROWS - 2; index++)
                     {
                         map[index][x_pos] = map[index + 1][x_pos];
-                        map[MAX_ROWS - 1][x_pos] = 0;
                     }
+                    map[MAX_ROWS - 1][x_pos] = 0;
                 }
             }
         }
