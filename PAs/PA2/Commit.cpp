@@ -56,7 +56,7 @@ Blob *list_put(List *list, const string &name, const string &ref)
     }
     else // this means no blobs with the same name exists in the linked list
     {
-        temp = list->head; // point it to the head
+        temp = list->head->next; // point it to the first non-sentinal node
         /* creat the new blob with given content */
         Blob *newBlob = new Blob;
         newBlob->name = name;
@@ -64,6 +64,11 @@ Blob *list_put(List *list, const string &name, const string &ref)
         /* insert it to the correct position */
         while (temp->name < name)
         {
+            if (temp->next == list->head) //this means the name of the last node is still smaller than the new one
+            {
+                list_push_back(list, newBlob);
+                return newBlob;
+            }
             temp = temp->next;
         }
         // at the moment exiting the loop, temp points at the node before which we will insert the new Node
@@ -89,7 +94,7 @@ Blob *list_put(List *list, const string &name, Commit *commit)
     }
     else // this means no blobs with the same name exists in the linked list
     {
-        temp = list->head; // point it to the head
+        temp = list->head->next; // point it to the first non-sentinal node
         /* creat the new blob with given content */
         Blob *newBlob = new Blob;
         newBlob->name = name;
@@ -97,6 +102,11 @@ Blob *list_put(List *list, const string &name, Commit *commit)
         /* insert it to the correct position */
         while (temp->name < name)
         {
+            if (temp->next == list->head) //this means the name of the last node is still smaller than the new one
+            {
+                list_push_back(list, newBlob);
+                return newBlob;
+            }
             temp = temp->next;
         }
         // at the moment exiting the loop, temp points at the node before which we will insert the new Node
