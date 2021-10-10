@@ -295,6 +295,7 @@ bool Repository::merge(const std::string &branch_name) {
         }
         return true;
     }
+    list_delete(filenames);
     return false;
 }
 
