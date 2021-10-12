@@ -1,6 +1,6 @@
 #include "gitlite.h"
 #include "Utils.h"
-
+#define DEBUG 0
 using namespace std;
 
 const string msg_initial_commit = "initial commit";
@@ -60,23 +60,26 @@ void init(Blob *&current_branch, List *&branches, List *&staged_files, List *&tr
     staged_files = list_new();
     tracked_files = list_new();
 
-    // create the initial commit
-    Commit *initial_commit = new Commit;
+    Commit *initial_commit = new Commit; // create the initial commit
     std::string time = get_time_string();
-    initial_commit->message = msg_initial_commit;
-    initial_commit->time = time;
-    initial_commit->commit_id = get_sha1(msg_initial_commit, time);
-    initial_commit->parent = nullptr;
-    initial_commit->second_parent = nullptr;
-    initial_commit->tracked_files = tracked_files;
-
-    //Create a branch called master and set it as the current branch.
-    Blob *newBranch = new Blob;
+    initial_commit->message = msg_initial_commit;                   // with msg "initial commit"
+    initial_commit->time = time;                                    // set the time string
+    initial_commit->commit_id = get_sha1(msg_initial_commit, time); // and compute the hash
+    initial_commit->tracked_files = list_new();                     // This commit tracks no files (initialize commit->tracked_files as well)
+    initial_commit->parent = nullptr;                               // and has no parents
+    initial_commit->second_parent = nullptr;                        // and has no parents
+#if not DEBUG
+    Blob *newBranch = new Blob;         // Create a branch
+    newBranch->name = "master";         // called master
+    current_branch = newBranch;         // and set it as the current branch.
+    newBranch->commit = initial_commit; // add the initial commit to the branch
+    head_commit = initial_commit;       // Set the head commit of the repository
     list_push_back(branches, newBranch);
-    newBranch->name = "master";
-    current_branch = newBranch;
-    newBranch->commit = initial_commit; //Add the initial commit to the branch.
-    head_commit = initial_commit;       // Set the head commit of the repository as well.
+#else
+    current_branch = list_put(branches, "master", ""); // ref remains empty when representing a branch.
+    // Add the initial commit to the branch. Set the head commit of the repository as well.
+    current_branch->commit = head_commit;
+#endif
 }
 
 bool add(const string &filename, List *staged_files, List *tracked_files, const Commit *head_commit)
@@ -200,15 +203,19 @@ bool remove(const string &filename, List *staged_files, List *tracked_files, con
 void log(const Commit *head_commit)
 {
     const Commit *temp = head_commit; // create a "temp" pointing to the head commit
-    while (temp->parent->message != msg_initial_commit)
+    while (temp->parent != nullptr)
     {
+        cout << "===" << endl;
         commit_print(temp);
+        cout << endl
+             << endl;
         temp = temp->parent;
     }
     // at the moment leaving the loop, temp points at the commit after the initial commit, so two commits are not printed
+    cout << "===" << endl;
     commit_print(temp);
-    temp = temp->parent;
-    commit_print(temp);
+    cout << endl
+         << endl;
 }
 
 void status(const Blob *current_branch, const List *branches, const List *staged_files, const List *tracked_files,
@@ -240,16 +247,24 @@ void status(const Blob *current_branch, const List *branches, const List *staged
     /* Part 2, staged files */
     if (1)
     {
-        /*Display the filenames of all files that are staged for addition.*/
-        temp = staged_files->head->next; // temp points at the first staged file in staged_files
         cout << status_staged_files_header << endl;
-        while (temp->next != staged_files->head)
+        /*Display the filenames of all files that are staged for addition.*/
+        if (list_size(staged_files) == 0)
         {
-            cout << temp->name << endl;
-            temp = temp->next;
+            /*do nothing*/
         }
-        // at the moment exiting the loop, temp points at the last file in staged_files, print the last name as well
-        cout << temp->name << endl;
+        else
+        {
+            temp = staged_files->head->next; // temp points at the first staged file in staged_files
+
+            while (temp->next != staged_files->head)
+            {
+                cout << temp->name << endl;
+                temp = temp->next;
+            }
+            // at the moment exiting the loop, temp points at the last file in staged_files, print the last name as well
+            cout << temp->name << endl;
+        }
     }
 
     cout << endl;
@@ -415,6 +430,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         }
 
         // go through the list of files to display and print them
+        cout << status_modifications_not_staged_header << endl;
         temp = files_to_display->head->next; // temp points at the 1st file to display
         while (temp->next != files_to_display->head)
         {
@@ -440,6 +456,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
     /* Part 5, Untracked files */
     if (1)
     {
+        cout << status_untracked_files_header << endl;
         // Files exist in CWD but not currently tracked by the repository
         if (list_size(cwd_files) == 0) // there is no file in CWD
         {
