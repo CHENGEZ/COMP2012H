@@ -372,7 +372,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
 
                 // go through every file "tracked by head commit" and check whether it's "traked by the repo" && "deleted in CWD"
                 temp = head_commit->tracked_files->head->next; // temp points at the 1st file tracked by head commit
-                while (temp != head_commit->tracked_files->head)
+                while (temp != tracked_files->head)
                 {
                     if (list_find_name(tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
                     {
