@@ -321,47 +321,33 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         but the content recorded in the staging area is different with the content in CWD.*/
             if (1)
             {
-                if (list_size(staged_files) == 0) // no file is staged for addition
+                //go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
+                temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
+                while (temp != staged_files->head)
                 {
-                    /* don't do anything */
-                }
-                else // there are some files staged for addition
-                {
-                    //go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
-                    temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
-                    while (temp != staged_files->head)
+                    if (is_file_exist(temp->name))
                     {
-                        if (is_file_exist(temp->name))
+                        if (temp->ref != get_sha1(temp->name))
                         {
-                            if (temp->ref != get_sha1(temp->name))
-                            {
-                                list_put(files_to_display, temp->name, "2");
-                            }
+                            list_put(files_to_display, temp->name, "2");
                         }
-                        temp = temp->next;
                     }
+                    temp = temp->next;
                 }
             }
 
             /*Situation 3: Files staged for addition but deleted in CWD.*/
             if (1)
             {
-                if (list_size(staged_files) == 0) // no file is staged for addition
+                //go through every file staged for addition and check whether that file exists in CWD
+                temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
+                while (temp != staged_files->head)
                 {
-                    /* don't do anything */
-                }
-                else
-                {
-                    //go through every file staged for addition and check whether that file exists in CWD
-                    temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
-                    while (temp != staged_files->head)
+                    if (!is_file_exist(temp->name))
                     {
-                        if (!is_file_exist(temp->name))
-                        {
-                            list_put(files_to_display, temp->name, "3");
-                        }
-                        temp = temp->next;
+                        list_put(files_to_display, temp->name, "3");
                     }
+                    temp = temp->next;
                 }
             }
 
@@ -372,7 +358,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
 
                 // go through every file "tracked by head commit" and check whether it's "traked by the repo" && "deleted in CWD"
                 temp = head_commit->tracked_files->head->next; // temp points at the 1st file tracked by head commit
-                while (temp != tracked_files->head)
+                while (temp != head_commit->tracked_files->head)
                 {
                     if (list_find_name(tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
                     {
