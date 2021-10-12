@@ -199,7 +199,7 @@ bool remove(const string &filename, List *staged_files, List *tracked_files, con
 
 void log(const Commit *head_commit)
 {
-    Commit *temp = head_commit; // create a "temp" pointing to the head commit
+    const Commit *temp = head_commit; // create a "temp" pointing to the head commit
     while (temp->parent->message != msg_initial_commit)
     {
         commit_print(temp);
@@ -469,8 +469,20 @@ void status(const Blob *current_branch, const List *branches, const List *staged
 
 bool checkout(const string &filename, Commit *commit)
 {
-    
-    return false;
+    /* Faliure check */
+    if (commit == nullptr)
+    {
+        cout << msg_commit_does_not_exist << endl;
+        return false;
+    }
+    if (list_find_name(commit->tracked_files, filename) == nullptr)
+    {
+        cout << msg_file_does_not_exist << endl;
+        return false;
+    }
+
+    write_file(filename, commit->commit_id);
+    return true;
 }
 
 bool checkout(const string &branch_name, Blob *&current_branch, const List *branches, List *staged_files,
