@@ -1,4 +1,5 @@
  .vscode/
+self-testing/
 
 *.exe
 *.json
