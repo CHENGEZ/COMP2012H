@@ -303,10 +303,13 @@ void status(const Blob *current_branch, const List *branches, const List *staged
                     {
                         if (list_find_name(staged_files, temp->name) == nullptr) // this file is unstaged
                         {
-                            // check whether the content recorded in the commit is different with the content in the current working directory
-                            if (temp->ref != get_sha1(temp->name)) // if they are different, add it to files_to_display
+                            if (is_file_exist(temp->name))
                             {
-                                list_put(files_to_display, temp->name, "1");
+                                // check whether the content recorded in the commit is different with the content in the current working directory
+                                if (temp->ref != get_sha1(temp->name)) // if they are different, add it to files_to_display
+                                {
+                                    list_put(files_to_display, temp->name, "1");
+                                }
                             }
                         }
                         temp = temp->next;
@@ -328,9 +331,12 @@ void status(const Blob *current_branch, const List *branches, const List *staged
                     temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
                     while (temp != staged_files->head)
                     {
-                        if (temp->ref != get_sha1(temp->name))
+                        if (is_file_exist(temp->name))
                         {
-                            list_put(files_to_display, temp->name, "2");
+                            if (temp->ref != get_sha1(temp->name))
+                            {
+                                list_put(files_to_display, temp->name, "2");
+                            }
                         }
                         temp = temp->next;
                     }
@@ -362,24 +368,17 @@ void status(const Blob *current_branch, const List *branches, const List *staged
             /*Situation 4: Files not staged for removal but tracked in the head commit of the repository and deleted in CWD.*/
             if (1)
             {
-                // this situation is equivalent to files that are: "tracked by the repo" && "traked by head commit" && "deleted in CWD"
+                // this situation is equivalent to files that are: "traked by head commit" && "tracked by the repo" && "deleted in CWD"
 
-                if (list_size(tracked_files) == 0) // no file is tracked by the repo
+                // go through every file "tracked by head commit" and check whether it's "traked by the repo" && "deleted in CWD"
+                temp = head_commit->tracked_files->head->next; // temp points at the 1st file tracked by head commit
+                while (temp != head_commit->tracked_files->head)
                 {
-                    /* don't do anything */
-                }
-                else
-                {
-                    // go through every file "tracked by the repo" and check whether it's "traked by head commit" && "deleted in CWD"
-                    temp = tracked_files->head->next; // temp points at the 1st file tracked by the repo
-                    while (temp != tracked_files->head)
+                    if (list_find_name(tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
                     {
-                        if (list_find_name(head_commit->tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
-                        {
-                            list_put(files_to_display, temp->name, "4");
-                        }
-                        temp = temp->next;
+                        list_put(files_to_display, temp->name, "4");
                     }
+                    temp = temp->next;
                 }
             }
 
