@@ -246,7 +246,11 @@ void status(const Blob *current_branch, const List *branches, const List *staged
 
             while (temp != staged_files->head)
             {
-                cout << temp->name << endl;
+                if (is_file_exist(temp->name))
+                {
+                    if (temp->ref == get_sha1(temp->name))
+                        cout << temp->name << endl;
+                }
                 temp = temp->next;
             }
         }
@@ -372,7 +376,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         // go through the list of files to display and print them
         cout << status_modifications_not_staged_header << endl;
         temp = files_to_display->head->next; // temp points at the 1st file to display
-        while (temp->next != files_to_display->head)
+        while (temp != files_to_display->head)
         {
             // print the name of this file
             cout << temp->name;
@@ -385,6 +389,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
             {
                 cout << msg_status_deleted << endl;
             }
+            temp = temp->next;
         }
 
         // remember to delete the temporary list
@@ -588,7 +593,7 @@ bool remove_branch(const string &branch_name, Blob *current_branch, List *branch
         cout << msg_remove_current << endl;
         return false;
     }
-    
+
     /*Delete the branch from the repository. Do not delete any commits.*/
     list_remove(branches, branch_name);
 
