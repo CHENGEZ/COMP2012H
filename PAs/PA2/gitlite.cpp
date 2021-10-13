@@ -252,167 +252,167 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         }
 
         cout << endl;
+    }
 
-        /* Part 3, removed files */
+    /* Part 3, removed files */
+    if (1)
+    {
+        /*Display the filenames of all files that are staged for removal.*/
+        // go through each file that is tracked by the head commit, and see if it is tracked by the repository.
+        // if it is tracked by the head commit and not tracked by the repository, then it is a file "staged for removal", print it.
+        cout << status_removed_files_header << endl;
+        if (list_size(head_commit->tracked_files) == 0) // no files tracked by head commit, so no files staged for removal
+        {
+            /* dont't print anything*/
+        }
+        else // the head commit did track some files
+        {
+            temp = head_commit->tracked_files->head->next; // "temp" points at the 1st file tracked by the head commit
+            while (temp != head_commit->tracked_files->head)
+            {
+                if (list_find_name(tracked_files, temp->name) == nullptr) // this file isn't tracked by the repository
+                {
+                    // print the name of this file
+                    cout << temp->name << endl;
+                }
+                temp = temp->next;
+            }
+        }
+    }
+
+    cout << endl;
+
+    /* Part 4, Modifications not staged for commit */
+    if (1)
+    {
+        // create a new list storing all files to display in ascending lexicographic order
+        List *files_to_display = list_new();
+
+        /* Situation 1: Unstaged files that are tracked in the head commit of the repository, 
+        but the content recorded in the commit is different with the content in the current working directory*/
         if (1)
         {
-            /*Display the filenames of all files that are staged for removal.*/
-            // go through each file that is tracked by the head commit, and see if it is tracked by the repository.
-            // if it is tracked by the head commit and not tracked by the repository, then it is a file "staged for removal", print it.
-            cout << status_removed_files_header << endl;
-            if (list_size(head_commit->tracked_files) == 0) // no files tracked by head commit, so no files staged for removal
+            if (list_size(head_commit->tracked_files) == 0) // no files tracked by head commit, then nothing to display for this situation
             {
-                /* dont't print anything*/
+                /* dont't do anything*/
             }
-            else // the head commit did track some files
+            else // the head commit did track some files, go through every file tracked by the head commit
             {
+                //go through every file tracked by the head commit and see whether it's unstaged
                 temp = head_commit->tracked_files->head->next; // "temp" points at the 1st file tracked by the head commit
                 while (temp != head_commit->tracked_files->head)
                 {
-                    if (list_find_name(tracked_files, temp->name) == nullptr) // this file isn't tracked by the repository
+                    if (list_find_name(staged_files, temp->name) == nullptr) // this file is unstaged
                     {
-                        // print the name of this file
-                        cout << temp->name << endl;
-                    }
-                    temp = temp->next;
-                }
-            }
-        }
-
-        cout << endl;
-
-        /* Part 4, Modifications not staged for commit */
-        if (1)
-        {
-            // create a new list storing all files to display in ascending lexicographic order
-            List *files_to_display = list_new();
-
-            /* Situation 1: Unstaged files that are tracked in the head commit of the repository, 
-        but the content recorded in the commit is different with the content in the current working directory*/
-            if (1)
-            {
-                if (list_size(head_commit->tracked_files) == 0) // no files tracked by head commit, then nothing to display for this situation
-                {
-                    /* dont't do anything*/
-                }
-                else // the head commit did track some files, go through every file tracked by the head commit
-                {
-                    //go through every file tracked by the head commit and see whether it's unstaged
-                    temp = head_commit->tracked_files->head->next; // "temp" points at the 1st file tracked by the head commit
-                    while (temp != head_commit->tracked_files->head)
-                    {
-                        if (list_find_name(staged_files, temp->name) == nullptr) // this file is unstaged
+                        if (is_file_exist(temp->name))
                         {
-                            if (is_file_exist(temp->name))
+                            // check whether the content recorded in the commit is different with the content in the current working directory
+                            if (temp->ref != get_sha1(temp->name)) // if they are different, add it to files_to_display
                             {
-                                // check whether the content recorded in the commit is different with the content in the current working directory
-                                if (temp->ref != get_sha1(temp->name)) // if they are different, add it to files_to_display
-                                {
-                                    list_put(files_to_display, temp->name, "1");
-                                }
+                                list_put(files_to_display, temp->name, "1");
                             }
                         }
-                        temp = temp->next;
-                    }
-                }
-            }
-
-            /* Situation 2: Files that were staged for addition, 
-        but the content recorded in the staging area is different with the content in CWD.*/
-            if (1)
-            {
-                //go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
-                temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
-                while (temp != staged_files->head)
-                {
-                    if (is_file_exist(temp->name))
-                    {
-                        if (temp->ref != get_sha1(temp->name))
-                        {
-                            list_put(files_to_display, temp->name, "2");
-                        }
                     }
                     temp = temp->next;
                 }
             }
-
-            /*Situation 3: Files staged for addition but deleted in CWD.*/
-            if (1)
-            {
-                //go through every file staged for addition and check whether that file exists in CWD
-                temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
-                while (temp != staged_files->head)
-                {
-                    if (!is_file_exist(temp->name))
-                    {
-                        list_put(files_to_display, temp->name, "3");
-                    }
-                    temp = temp->next;
-                }
-            }
-
-            /*Situation 4: Files not staged for removal but tracked in the head commit of the repository and deleted in CWD.*/
-            if (1)
-            {
-                // this situation is equivalent to files that are: "traked by head commit" && "tracked by the repo" && "deleted in CWD"
-
-                // go through every file "tracked by head commit" and check whether it's "traked by the repo" && "deleted in CWD"
-                temp = head_commit->tracked_files->head->next; // temp points at the 1st file tracked by head commit
-                while (temp != head_commit->tracked_files->head)
-                {
-                    if (list_find_name(tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
-                    {
-                        list_put(files_to_display, temp->name, "4");
-                    }
-                    temp = temp->next;
-                }
-            }
-
-            // go through the list of files to display and print them
-            cout << status_modifications_not_staged_header << endl;
-            temp = files_to_display->head->next; // temp points at the 1st file to display
-            while (temp->next != files_to_display->head)
-            {
-                // print the name of this file
-                cout << temp->name;
-                // append (modified) or (deleted) depending in situation 1-4
-                if (temp->ref == "1" || temp->ref == "2")
-                {
-                    cout << msg_status_modified << endl;
-                }
-                else if (temp->ref == "3" || temp->ref == "4")
-                {
-                    cout << msg_status_deleted << endl;
-                }
-            }
-
-            // remember to delete the temporary list
-            list_delete(files_to_display);
         }
 
-        cout << endl;
-
-        /* Part 5, Untracked files */
+        /* Situation 2: Files that were staged for addition, 
+        but the content recorded in the staging area is different with the content in CWD.*/
         if (1)
         {
-            cout << status_untracked_files_header << endl;
-            // Files exist in CWD but not currently tracked by the repository
-            if (list_size(cwd_files) == 0) // there is no file in CWD
+            //go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
+            temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
+            while (temp != staged_files->head)
             {
-                /* don't do anything */
-            }
-            else // there exist files in the CWD
-            {
-                temp = cwd_files->head->next; // temp points at the 1st file in the CWD
-                while (temp != cwd_files->head)
+                if (is_file_exist(temp->name))
                 {
-                    if (list_find_name(tracked_files, temp->name) == nullptr)
+                    if (temp->ref != get_sha1(temp->name))
                     {
-                        // print the name of this file
-                        cout << temp->name << endl;
+                        list_put(files_to_display, temp->name, "2");
                     }
-                    temp = temp->next;
                 }
+                temp = temp->next;
+            }
+        }
+
+        /*Situation 3: Files staged for addition but deleted in CWD.*/
+        if (1)
+        {
+            //go through every file staged for addition and check whether that file exists in CWD
+            temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
+            while (temp != staged_files->head)
+            {
+                if (!is_file_exist(temp->name))
+                {
+                    list_put(files_to_display, temp->name, "3");
+                }
+                temp = temp->next;
+            }
+        }
+
+        /*Situation 4: Files not staged for removal but tracked in the head commit of the repository and deleted in CWD.*/
+        if (1)
+        {
+            // this situation is equivalent to files that are: "traked by head commit" && "tracked by the repo" && "deleted in CWD"
+
+            // go through every file "tracked by head commit" and check whether it's "traked by the repo" && "deleted in CWD"
+            temp = head_commit->tracked_files->head->next; // temp points at the 1st file tracked by head commit
+            while (temp != head_commit->tracked_files->head)
+            {
+                if (list_find_name(tracked_files, temp->name) != nullptr && !is_file_exist(temp->name))
+                {
+                    list_put(files_to_display, temp->name, "4");
+                }
+                temp = temp->next;
+            }
+        }
+
+        // go through the list of files to display and print them
+        cout << status_modifications_not_staged_header << endl;
+        temp = files_to_display->head->next; // temp points at the 1st file to display
+        while (temp->next != files_to_display->head)
+        {
+            // print the name of this file
+            cout << temp->name;
+            // append (modified) or (deleted) depending in situation 1-4
+            if (temp->ref == "1" || temp->ref == "2")
+            {
+                cout << msg_status_modified << endl;
+            }
+            else if (temp->ref == "3" || temp->ref == "4")
+            {
+                cout << msg_status_deleted << endl;
+            }
+        }
+
+        // remember to delete the temporary list
+        list_delete(files_to_display);
+    }
+
+    cout << endl;
+
+    /* Part 5, Untracked files */
+    if (1)
+    {
+        cout << status_untracked_files_header << endl;
+        // Files exist in CWD but not currently tracked by the repository
+        if (list_size(cwd_files) == 0) // there is no file in CWD
+        {
+            /* don't do anything */
+        }
+        else // there exist files in the CWD
+        {
+            temp = cwd_files->head->next; // temp points at the 1st file in the CWD
+            while (temp != cwd_files->head)
+            {
+                if (list_find_name(tracked_files, temp->name) == nullptr)
+                {
+                    // print the name of this file
+                    cout << temp->name << endl;
+                }
+                temp = temp->next;
             }
         }
     }
