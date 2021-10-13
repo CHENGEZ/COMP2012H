@@ -433,7 +433,7 @@ bool checkout(const string &filename, Commit *commit)
         return false;
     }
 
-    write_file(filename, commit->commit_id);
+    write_file(filename, list_find_name(commit->tracked_files, filename)->ref);
     return true;
 }
 
