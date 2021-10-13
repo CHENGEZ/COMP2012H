@@ -439,23 +439,158 @@ bool checkout(const string &filename, Commit *commit)
 bool checkout(const string &branch_name, Blob *&current_branch, const List *branches, List *staged_files,
               List *tracked_files, const List *cwd_files, Commit *&head_commit)
 {
-    return false;
+    /* Failure check */
+    if (list_find_name(branches, branch_name) == nullptr)
+    {
+        cout << msg_branch_does_not_exist << endl;
+        return false;
+    }
+    if (branch_name == current_branch->name)
+    {
+        cout << msg_checkout_current << endl;
+        return false;
+    }
+    Blob *temp = cwd_files->head->next;
+    while (temp != cwd_files->head)
+    {
+        if (list_find_name(tracked_files, temp->name) == nullptr)
+        {
+            cout << msg_untracked_file << endl;
+            return false
+        }
+        temp = temp->next;
+    }
+
+    /*Take all files in the head commit of that branch and write the content of them to the current working directory.*/
+    temp = list_find_name(branches, branch_name)->commit->tracked_files->head->next;
+    while (temp != list_find_name(branches, branch_name)->commit->tracked_files->head) // go through all files tracked by the head commit of that bracnch
+    {
+        if (is_file_exist(temp->name))
+        {
+            write_file(temp->name, temp->ref);
+        }
+        temp = temp->next;
+    }
+
+    /*Any files that are tracked in the head commit of the repository but not the head commit of the given branch are deleted.*/
+    temp = head_commit->tracked_files->head->next;
+    while (temp != head_commit->tracked_files->head) //go through every file that are tracked in the head commit of the repository
+    {
+        if (list_find_name(list_find_name(branches, branch_name)->commit->tracked_files, temp->name) == nullptr) // not tracked by head commit of the given branch
+        {
+            if (is_file_exist(temp->name))
+            {
+                restricted_delete(temp->name);
+            }
+            temp = temp->next;
+        }
+    }
+
+    /*Set the currently tracked files of the repository to those that are tracked by the head commit of the given branch.*/
+    tracked_files = list_copy(list_find_name(branches, branch_name)->commit->tracked_files);
+
+    /* clear the staging area */
+    list_clear(staged_files);
+
+    /*The given branch becomes the current branch*/
+    current_branch = list_find_name(branches, branch_name);
+
+    /*update the head commit of the repository.*/
+    head_commit = list_find_name(branches, branch_name)->commit;
+
+    return true;
 }
 
 bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *tracked_files, const List *cwd_files,
            Commit *&head_commit)
 {
-    return false;
+    /*Faliure check*/
+    if (commit == nullptr)
+    {
+        cout << msg_commit_does_not_exist << endl;
+        return false;
+    }
+    Blob *temp = cwd_files->head->next;
+    while (temp != cwd_files->head)
+    {
+        if (list_find_name(tracked_files, temp->name) == nullptr)
+        {
+            cout << msg_untracked_file << endl;
+            return false;
+        }
+    }
+
+    /*Take all files in the given commit and write the content of them to the current working directory.*/
+    temp = commit->tracked_files->head->next;
+    while (temp != commit->tracked_files->head)
+    {
+        if (is_file_exist(temp->name))
+        {
+            write_file(temp->name, temp->ref);
+        }
+        temp = temp->next;
+    }
+
+    /*Any files that are tracked in the head commit of the repository but not by the given commit are deleted.*/
+    temp = head_commit->tracked_files->head->next;
+    while (temp != head_commit->tracked_files->head)
+    {
+        if (list_find_name(commit->tracked_files, temp->name) == nullptr)
+        {
+            if (is_file_exist(temp->name))
+            {
+                restricted_delete(temp->name);
+            }
+            temp = temp->next;
+        }
+    }
+
+    /*Set the currently tracked files of the repository to those that are tracked by the given commit*/
+    tracked_files = list_copy(commit->tracked_files);
+
+    /* clear the staging area */
+    list_clear(staged_files);
+
+    /*The given commit becomes the head commit of the current branch.*/
+    current_branch->commit = commit;
+
+    /* Also update the head commit of the repository.*/
+    head_commit = commit;
+
+    return true;
 }
 
 Blob *branch(const string &branch_name, List *branches, Commit *head_commit)
 {
-    return nullptr;
+    /*Faliure check*/
+    if (list_find_name(branch_name, branch_name) != nullptr)
+    {
+        cout << msg_branch_exists << endl;
+        return nullptr;
+    }
+
+    /*create the new branch, The head commit of the repository becomes the head commit of the new branch.*/
+    list_put(branches, branch_name, head_commit);
+
+    return list_find_name(branch_name, branch_name);
 }
 
 bool remove_branch(const string &branch_name, Blob *current_branch, List *branches)
 {
-    return false;
+    /*Failure check*/
+    if (list_find_name(branches, branch_name) == nullptr)
+    {
+        cout << msg_branch_does_not_exist << endl;
+        return false;
+    }
+    if (list_find_name(branches, branch_name) == current_branch)
+    {
+        cout << msg_remove_current << endl;
+        return false;
+    }
+    
+    /*Delete the branch from the repository. Do not delete any commits.*/
+    list_remove(branches, branch_name);
 }
 
 bool merge(const string &branch_name, Blob *&current_branch, List *branches, List *staged_files, List *tracked_files,
