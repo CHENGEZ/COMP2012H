@@ -246,11 +246,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
 
             while (temp != staged_files->head)
             {
-                if (is_file_exist(temp->name))
-                {
-                    if (temp->ref == get_sha1(temp->name))
-                        cout << temp->name << endl;
-                }
+                cout << temp->name << endl;
                 temp = temp->next;
             }
         }
