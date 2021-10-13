@@ -239,5 +239,19 @@ void commit_print(const Commit *commit)
 
 Commit *get_lca(Commit *c1, Commit *c2)
 {
+    Commit *temp1 = c1;
+    Commit *temp2 = c2;
+    while (temp1->parent != nullptr) // when one's parent is nullptr, it means it has reached the head commit
+    {
+        while (temp2->parent != nullptr)
+        {
+            if (temp2 == temp1)
+                return temp2;
+            temp2 = temp2->parent;
+        }
+        temp2 = c2;
+        temp1 = temp1->parent;
+    }
+
     return nullptr;
 }
