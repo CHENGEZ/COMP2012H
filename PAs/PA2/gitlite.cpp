@@ -456,7 +456,7 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
         if (list_find_name(tracked_files, temp->name) == nullptr)
         {
             cout << msg_untracked_file << endl;
-            return false
+            return false;
         }
         temp = temp->next;
     }
@@ -563,7 +563,7 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
 Blob *branch(const string &branch_name, List *branches, Commit *head_commit)
 {
     /*Faliure check*/
-    if (list_find_name(branch_name, branch_name) != nullptr)
+    if (list_find_name(branches, branch_name) != nullptr)
     {
         cout << msg_branch_exists << endl;
         return nullptr;
@@ -572,7 +572,7 @@ Blob *branch(const string &branch_name, List *branches, Commit *head_commit)
     /*create the new branch, The head commit of the repository becomes the head commit of the new branch.*/
     list_put(branches, branch_name, head_commit);
 
-    return list_find_name(branch_name, branch_name);
+    return list_find_name(branches, branch_name);
 }
 
 bool remove_branch(const string &branch_name, Blob *current_branch, List *branches)
@@ -591,6 +591,8 @@ bool remove_branch(const string &branch_name, Blob *current_branch, List *branch
     
     /*Delete the branch from the repository. Do not delete any commits.*/
     list_remove(branches, branch_name);
+
+    return true;
 }
 
 bool merge(const string &branch_name, Blob *&current_branch, List *branches, List *staged_files, List *tracked_files,
