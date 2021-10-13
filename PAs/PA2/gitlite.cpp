@@ -479,10 +479,7 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
     temp = list_find_name(branches, branch_name)->commit->tracked_files->head->next;
     while (temp != list_find_name(branches, branch_name)->commit->tracked_files->head) // go through all files tracked by the head commit of that bracnch
     {
-        if (is_file_exist(temp->name))
-        {
-            write_file(temp->name, temp->ref);
-        }
+        write_file(temp->name, temp->ref);
         temp = temp->next;
     }
 
