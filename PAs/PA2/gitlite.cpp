@@ -441,23 +441,36 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
               List *tracked_files, const List *cwd_files, Commit *&head_commit)
 {
     /* Failure check */
+    /*If the given branch does not exist, print A branch with that name does not exist. and return false.*/
     if (list_find_name(branches, branch_name) == nullptr)
     {
         cout << msg_branch_does_not_exist << endl;
         return false;
     }
+    /*If the given branch is the current branch, print No need to checkout the current branch. and return false.*/
     if (branch_name == current_branch->name)
     {
         cout << msg_checkout_current << endl;
         return false;
     }
-    Blob *temp = cwd_files->head->next;
+    /*If there exists untracked files in the current working directory that would be overwritten*/
+    Blob *temp = cwd_files->head->next; // go through all the files in cwd
     while (temp != cwd_files->head)
     {
-        if (list_find_name(tracked_files, temp->name) == nullptr)
+        if (list_find_name(tracked_files, temp->name) == nullptr) // if it's untracked, check whether it will be overwritten
         {
-            cout << msg_untracked_file << endl;
-            return false;
+            List *tracked_files_of_target_branch_head_commit = list_find_name(branches, branch_name)->commit->tracked_files;
+            Blob *theFileInTargetBranch = list_find_name(tracked_files_of_target_branch_head_commit, temp->name);
+            if (theFileInTargetBranch == nullptr)
+            {
+                // this means this file wasn't tracked by the head commit of the target branch, so will not overwrite
+            }
+            else // this means this file was tracked by the head commit of the target branch, check whether content is same
+            {
+                if (get_sha1(temp->name) != theFileInTargetBranch->ref) // content is different, will overwrite
+                    cout << msg_untracked_file << endl;
+                return false;
+            }
         }
         temp = temp->next;
     }
@@ -483,12 +496,12 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
             {
                 restricted_delete(temp->name);
             }
-            temp = temp->next;
         }
+        temp = temp->next;
     }
 
     /*Set the currently tracked files of the repository to those that are tracked by the head commit of the given branch.*/
-    tracked_files = list_copy(list_find_name(branches, branch_name)->commit->tracked_files);
+    list_replace(tracked_files, list_find_name(branches, branch_name)->commit->tracked_files);
 
     /* clear the staging area */
     list_clear(staged_files);
@@ -547,7 +560,7 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
     }
 
     /*Set the currently tracked files of the repository to those that are tracked by the given commit*/
-    tracked_files = list_copy(commit->tracked_files);
+    list_replace(tracked_files, commit->tracked_files);
 
     /* clear the staging area */
     list_clear(staged_files);
@@ -599,5 +612,14 @@ bool remove_branch(const string &branch_name, Blob *current_branch, List *branch
 bool merge(const string &branch_name, Blob *&current_branch, List *branches, List *staged_files, List *tracked_files,
            const List *cwd_files, Commit *&head_commit)
 {
-    return false;
+    if (list_find_name(branches, branch_name) == nullptr)
+    {
+        cout << msg_branch_does_not_exist << endl;
+        return false;
+    }
+    if (branch_name == current_branch->name)
+    {
+        cout << msg_merge_current << endl;
+        return false;
+    }
 }
