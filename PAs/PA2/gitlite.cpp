@@ -563,8 +563,8 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
             {
                 restricted_delete(temp->name);
             }
-            temp = temp->next;
         }
+        temp = temp->next;
     }
 
     /*Set the currently tracked files of the repository to those that are tracked by the given commit*/
