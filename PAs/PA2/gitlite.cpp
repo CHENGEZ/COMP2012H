@@ -516,29 +516,40 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
            Commit *&head_commit)
 {
     /*Faliure check*/
+    /* If commit is nullptr, then the wrapper cannot find the commit with the commit id. 
+    Print No commit with that id exists. and return false.*/
     if (commit == nullptr)
     {
         cout << msg_commit_does_not_exist << endl;
         return false;
     }
-    Blob *temp = cwd_files->head->next;
+    /*If there exists untracked files in the current working directory that would be overwritten*/
+    Blob *temp = cwd_files->head->next; // go through all files in cwd
     while (temp != cwd_files->head)
     {
-        if (list_find_name(tracked_files, temp->name) == nullptr)
+        if (list_find_name(tracked_files, temp->name) == nullptr) // if it's untracked, check whether it will be overwritten
         {
-            cout << msg_untracked_file << endl;
-            return false;
+            List *tracked_files_of_given_commit = commit->tracked_files;
+            Blob *theFileInGivenCommit = list_find_name(tracked_files_of_given_commit, temp->name);
+            if (theFileInGivenCommit == nullptr)
+            {
+                // this means this file is not tracked in the given commit, so will not overwrite
+            }
+            else // this means this file is tracked by the given commit, check whether content is same
+            {
+                if (get_sha1(temp->name) != theFileInGivenCommit->ref)
+                    cout << msg_untracked_file << endl;
+                return false;
+            }
         }
+        temp = temp->next;
     }
 
     /*Take all files in the given commit and write the content of them to the current working directory.*/
     temp = commit->tracked_files->head->next;
     while (temp != commit->tracked_files->head)
     {
-        if (is_file_exist(temp->name))
-        {
-            write_file(temp->name, temp->ref);
-        }
+        write_file(temp->name, temp->ref);
         temp = temp->next;
     }
 
