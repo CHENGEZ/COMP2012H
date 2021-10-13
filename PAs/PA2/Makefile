@@ -6,7 +6,7 @@ CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -Iinclude
 
 ifeq (Windows_NT, $(OS))
-RM := del
+RM := rm
 else
 RM := rm -f
 endif
@@ -16,7 +16,7 @@ all: $(OUT)
 
 
 $(OUT): $(OBJS)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ -static
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
