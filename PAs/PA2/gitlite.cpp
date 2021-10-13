@@ -106,7 +106,6 @@ bool add(const string &filename, List *staged_files, List *tracked_files, const 
     }
     else // simply save the content of the file to the staging area as well. Return true.
     {
-        stage_content(filename);
         list_put(staged_files, filename, hashValue);
         return true;
     }
@@ -620,11 +619,14 @@ bool remove_branch(const string &branch_name, Blob *current_branch, List *branch
 bool merge(const string &branch_name, Blob *&current_branch, List *branches, List *staged_files, List *tracked_files,
            const List *cwd_files, Commit *&head_commit)
 {
+    /* Failure check */
+    /*If the given branch does not exist, print A branch with that name does not exist., and return false*/
     if (list_find_name(branches, branch_name) == nullptr)
     {
         cout << msg_branch_does_not_exist << endl;
         return false;
     }
+    /*If trying to merge the current branch, print Cannot merge a branch with itself. and return false*/
     if (branch_name == current_branch->name)
     {
         cout << msg_merge_current << endl;
