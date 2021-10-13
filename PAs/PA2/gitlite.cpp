@@ -632,4 +632,33 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
         cout << msg_merge_current << endl;
         return false;
     }
+    /*If there exists uncommitted changes, print You have uncommitted changes. and return false.*/
+    // Uncommitted changes refer to those that appear in status “Staged Files” and “Removed Files”.
+    if (list_size(staged_files) != 0)
+    {
+        cout << msg_exists_uncommitted_changes << endl;
+        return false;
+    }
+    // go through each file that is tracked by the head commit, and see if it is tracked by the repository.
+    // if it is tracked by the head commit and not tracked by the repository, then it is a file "staged for removal"
+    if (list_size(head_commit->tracked_files) == 0) // no files tracked by head commit, so no files staged for removal
+    {
+        /* dont't do anything*/
+    }
+    else // the head commit did track some files
+    {
+        Blob *temp = head_commit->tracked_files->head->next; // "temp" points at the 1st file tracked by the head commit
+        while (temp != head_commit->tracked_files->head)
+        {
+            if (list_find_name(tracked_files, temp->name) == nullptr) // this file isn't tracked by the repository
+            {
+                cout << msg_exists_uncommitted_changes << endl;
+                return false;
+            }
+            temp = temp->next;
+        }
+    }
+
+    /*Otherwise, proceed to compute the split point of the current branch and the given branch. */
+    
 }
