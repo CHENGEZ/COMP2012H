@@ -241,9 +241,9 @@ Commit *get_lca(Commit *c1, Commit *c2)
 {
     Commit *temp1 = c1;
     Commit *temp2 = c2;
-    while (temp1->parent != nullptr) // when one's parent is nullptr, it means it has reached the head commit
+    while (temp1 != nullptr) // when one's becomes nullptr, it means it has reached the head commit previously
     {
-        while (temp2->parent != nullptr)
+        while (temp2 != nullptr)
         {
             if (temp2 == temp1)
                 return temp2;
