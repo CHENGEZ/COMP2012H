@@ -897,7 +897,7 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
     list_delete(files_in_conflict);
 
     /*After processing the files, create a merge commit with message Merged [given branch name] into [current branch name].*/
-    string commitMsg = "Merged " + givenBranch->name + " into " + current_branch->name + ".";
+    string commitMsg = get_merge_commit_message(givenBranch, current_branch);
     commit(commitMsg, current_branch, staged_files, tracked_files, head_commit);
     head_commit->second_parent = givenBranch->commit;
 
