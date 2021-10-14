@@ -85,14 +85,14 @@ bool add(const string &filename, List *staged_files, List *tracked_files, const 
     string hashValue = get_sha1(filename);
     list_put(tracked_files, filename, hashValue);
 
-    //check whether the file is tracked in the head commit of the repository, with the same content as the current file
+    // check whether the file is tracked in the head commit of the repository, with the same content as the current file
     bool alreadyTracked = list_find_name(head_commit->tracked_files, filename) == nullptr ? false : true;
     bool haveSameContent = false;
     if (alreadyTracked)
         haveSameContent = list_find_name(head_commit->tracked_files, filename)->ref == hashValue ? true : false;
 
-    //If the file is tracked in the head commit of the repository, with the same content as the current file,
-    //then remove the file from the staging area (if it is staged). Return false.
+    // If the file is tracked in the head commit of the repository, with the same content as the current file,
+    // then remove the file from the staging area (if it is staged). Return false.
     if (alreadyTracked && haveSameContent)
     {
         // check whether this file is already staged
@@ -117,16 +117,16 @@ bool commit(const string &message, Blob *current_branch, List *staged_files, Lis
      print No changes added to the commit. and return false.*/
     bool noFilesInStagingArea = list_size(staged_files) == 0 ? true : false;
     bool existFilesStagedForRemoval = false;
-    if (list_size(head_commit->tracked_files) == 0) //if the head commit didn't track any files, it couldn't have tracked this file
+    if (list_size(head_commit->tracked_files) == 0) // if the head commit didn't track any files, it couldn't have tracked this file
     {
         existFilesStagedForRemoval = false;
     }
     else // this means the head commit did track some file
     {
-        Blob *temp = head_commit->tracked_files->head->next; //set a temp ptr pointing at the 1st tracked file of the head commit of the repository
+        Blob *temp = head_commit->tracked_files->head->next; // set a temp ptr pointing at the 1st tracked file of the head commit of the repository
         while (temp != head_commit->tracked_files->head)     // go through every file tracked by the head commit
         {
-            if (list_find_name(tracked_files, temp->name) == nullptr) //this means a file tracked by the head commit is not currently tracked by the repository
+            if (list_find_name(tracked_files, temp->name) == nullptr) // this means a file tracked by the head commit is not currently tracked by the repository
                 existFilesStagedForRemoval = true;
 
             temp = temp->next;
@@ -146,7 +146,7 @@ bool commit(const string &message, Blob *current_branch, List *staged_files, Lis
     newCommit->time = time;
     newCommit->commit_id = commit_id;
 
-    /*Take a snapshot of the repository by copying the tracked files of the repository to the tracked files of this commit. 
+    /*Take a snapshot of the repository by copying the tracked files of the repository to the tracked files of this commit.
     These files become the files that are tracked by this commit.*/
     newCommit->tracked_files = list_copy(tracked_files);
 
@@ -167,7 +167,7 @@ bool remove(const string &filename, List *staged_files, List *tracked_files, con
     if (trackedByHeadCommit)
     {
         list_remove(tracked_files, filename); // remove it from the current tracked files of the repository
-        if (is_file_exist(filename))          //and remove the file from the current working directory (if it exists).
+        if (is_file_exist(filename))          // and remove the file from the current working directory (if it exists).
             restricted_delete(filename);
     }
 
@@ -287,7 +287,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         // create a new list storing all files to display in ascending lexicographic order
         List *files_to_display = list_new();
 
-        /* Situation 1: Unstaged files that are tracked in the head commit of the repository, 
+        /* Situation 1: Unstaged files that are tracked in the head commit of the repository,
         but the content recorded in the commit is different with the content in the current working directory*/
         if (1)
         {
@@ -297,7 +297,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
             }
             else // the head commit did track some files, go through every file tracked by the head commit
             {
-                //go through every file tracked by the head commit and see whether it's unstaged
+                // go through every file tracked by the head commit and see whether it's unstaged
                 temp = head_commit->tracked_files->head->next; // "temp" points at the 1st file tracked by the head commit
                 while (temp != head_commit->tracked_files->head)
                 {
@@ -317,11 +317,11 @@ void status(const Blob *current_branch, const List *branches, const List *staged
             }
         }
 
-        /* Situation 2: Files that were staged for addition, 
+        /* Situation 2: Files that were staged for addition,
         but the content recorded in the staging area is different with the content in CWD.*/
         if (1)
         {
-            //go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
+            // go through every file staged for addition and see whether the content recorded in the staging area is different with the content in CWD.
             temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
             while (temp != staged_files->head)
             {
@@ -339,7 +339,7 @@ void status(const Blob *current_branch, const List *branches, const List *staged
         /*Situation 3: Files staged for addition but deleted in CWD.*/
         if (1)
         {
-            //go through every file staged for addition and check whether that file exists in CWD
+            // go through every file staged for addition and check whether that file exists in CWD
             temp = staged_files->head->next; // "temp" points at the 1st file staged for addition
             while (temp != staged_files->head)
             {
@@ -484,7 +484,7 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
 
     /*Any files that are tracked in the head commit of the repository but not the head commit of the given branch are deleted.*/
     temp = head_commit->tracked_files->head->next;
-    while (temp != head_commit->tracked_files->head) //go through every file that are tracked in the head commit of the repository
+    while (temp != head_commit->tracked_files->head) // go through every file that are tracked in the head commit of the repository
     {
         if (list_find_name(list_find_name(branches, branch_name)->commit->tracked_files, temp->name) == nullptr) // not tracked by head commit of the given branch
         {
@@ -515,7 +515,7 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
            Commit *&head_commit)
 {
     /*Faliure check*/
-    /* If commit is nullptr, then the wrapper cannot find the commit with the commit id. 
+    /* If commit is nullptr, then the wrapper cannot find the commit with the commit id.
     Print No commit with that id exists. and return false.*/
     if (commit == nullptr)
     {
@@ -660,5 +660,246 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
     }
 
     /*Otherwise, proceed to compute the split point of the current branch and the given branch. */
-    
+    Blob *givenBranch = list_find_name(branches, branch_name);
+    Commit *splitPoint = get_lca(current_branch->commit, givenBranch->commit);
+
+    /*If the split point is the head commit of the given branch,
+    then all changes in the given branch exist in the current branch (the current branch is ahead of the given branch).
+    So there is nothing to be done in the current branch.
+    Simply print Given branch is an ancestor of the current branch. and return true*/
+    if (splitPoint == givenBranch->commit)
+    {
+        cout << msg_given_is_ancestor_of_current << endl;
+        return true;
+    }
+
+    /*If the split point is the head commit of the current branch,
+    then all changes in the current branch exist in the given branch (the given branch is ahead of the current branch).
+    Simply set the state of the repository to the head commit of the given branch (using one command above).
+    If it succeeded, print Current branch fast-forwarded. and return true. If it failed, return false.*/
+    if (splitPoint == current_branch->commit)
+    {
+        bool success;
+        success = reset(givenBranch->commit, current_branch, staged_files, tracked_files, cwd_files, head_commit);
+        if (success)
+        {
+            cout << msg_fast_forward << endl;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /*Otherwise, the split point is neither the head commit of the current branch or the head commit of the given branch.
+    Their history has diverged, like the above example. We need to incorporate the latest changes from both branches.*/
+
+    /*Traverse cwd_files, if there exists a file that is not tracked in the head commit of the current branch
+    but tracked in the head commit of the given branch,
+    print There is an untracked file in the way; delete it, or add and commit it first. and return false.*/
+    Blob *temp = cwd_files->head->next;
+    while (temp != cwd_files->head) // Traverse cwd_files
+    {
+        if (list_find_name(current_branch->commit->tracked_files, temp->name) == nullptr) // a file that is not tracked in the head commit of the current branch
+        {
+            if (list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // but tracked in the head commit of the given branch
+            {
+                cout << msg_untracked_file << endl;
+                return false;
+            }
+        }
+
+        temp = temp->next;
+    }
+
+    /*Otherwise, proceed to merge the two branches with rules below.
+    A general idea is to incorporate the latest changes from both branches.*/
+
+    /*1. Any files that have been modified in the given branch
+    but not modified in the current branch since the split point
+    should be changed to their versions in the given branch.*/
+
+    // go through everyfile tracked by the head commit in the current branch
+    temp = current_branch->commit->tracked_files->head->next; // temp points at 1st file of the head commit of current branch
+    while (temp != current_branch->commit->tracked_files->head)
+    {
+        string versionInHeadOfCurrentBranch = temp->ref;
+        Blob *theFileAtSplitPoint = list_find_name(splitPoint->tracked_files, temp->name);
+        Blob *theFileInGivenBranch = list_find_name(givenBranch->commit->tracked_files, temp->name);
+        string versionInSplitPoint = theFileAtSplitPoint == nullptr ? "null" : theFileAtSplitPoint->ref;
+        string versionInGivenBranch = theFileInGivenBranch == nullptr ? "null" : theFileInGivenBranch->ref;
+        if (theFileAtSplitPoint != nullptr && theFileInGivenBranch != nullptr) // if the file is tracked by the splitpoint commit and also the head commit of given branch
+        {
+            if (versionInHeadOfCurrentBranch == versionInSplitPoint) // if the file haven't been modified since the split point in the current branch
+            {
+                // check whether the same file has been modified in the given branch
+                if (versionInHeadOfCurrentBranch != versionInGivenBranch)
+                {
+                    /*this means the same file has been modified in the given branch, need to change the version in the current branch
+                    into the version in the given branch*/
+                    checkout(temp->name, givenBranch->commit);                 // checkout the file
+                    add(temp->name, staged_files, tracked_files, head_commit); // stage the files for addition.
+                    stage_content(temp->name);                                 // In addition, you need to call stage_content(filename) explicitly to modify the index in the .gitlite directory.
+                }
+            }
+        }
+        temp = temp->next;
+    }
+
+    /*2.Any files that have been modified in the current branch
+    but not modified in the given branch since the split point should remain unchanged.*/
+
+    /*3.Any files that have been modified in both the current branch and the given branch in the same way
+    (both modified with same content or both removed), should remain unchanged.*/
+
+    /*4.Any files that were not present at the split point
+    and are present only in the current branch should remained unchanged.*/
+
+    /*5.Any files that were not present at the split point
+    and are present only in the given branch should be added with their versions in the given branch.*/
+
+    // go through all files tracked by the head commit of the given branch and check whether they exist at the split point
+    temp = givenBranch->commit->tracked_files->head->next;
+    while (temp != givenBranch->commit->tracked_files->head)
+    {
+        if (list_find_name(splitPoint->tracked_files, temp->name) == nullptr) // the file was not presesnt at the split point
+        {
+            checkout(temp->name, givenBranch->commit);                 // checkout the file
+            add(temp->name, staged_files, tracked_files, head_commit); // stage the files for addition.
+            stage_content(temp->name);                                 // In addition, you need to call stage_content(filename) explicitly to modify the index in the .gitlite directory.
+        }
+        temp = temp->next;
+    }
+
+    /*6.Any files present at the split point, unmodified in the current branch, and absent in the given branch
+    should be staged for removal.*/
+
+    // go through everyfile tracked by the head commit in the current branch
+    temp = current_branch->commit->tracked_files->head->next; // temp points at 1st file of the head commit of current branch
+    while (temp != current_branch->commit->tracked_files->head)
+    {
+        Blob *theFileAtSplitPoint = list_find_name(splitPoint->tracked_files, temp->name);
+        Blob *theFileInGivenBranch = list_find_name(givenBranch->commit->tracked_files, temp->name);
+        string versionInSplitPoint = theFileAtSplitPoint == nullptr ? "null" : theFileAtSplitPoint->ref;
+        string versionInHeadOfCurrentBranch = temp->ref;
+        if (theFileAtSplitPoint != nullptr) // if the file is present at the split point
+        {
+            if (versionInHeadOfCurrentBranch == versionInSplitPoint) // if the file haven't been modified since the split point in the current branch
+            {
+                if (theFileInGivenBranch == nullptr) // if the file is absent in the given branch
+                {
+                    /*it needs to be staged for removal*/
+
+                    /*PS: If the file is tracked by the head commit of the repository,
+                    then remove it from the currently tracked files of the repository and remove the file from the current working directory (if it exists).
+                    The file is staged for removal.*/
+
+                    list_remove(tracked_files, temp->name);
+                    if (is_file_exist(temp->name))
+                        restricted_delete(temp->name);
+                }
+            }
+        }
+        temp = temp->next;
+    }
+
+    /*7.Any files present at the split point, unmodified in the given branch, and absent in the current branch
+    should remain absent.*/
+
+    /*8.Any files modified in different ways in the current branch and the given branch are in conflict.*/
+    List *files_in_conflict = list_new();
+
+    /* first find all files that are in conflict and store them in a list, this include:
+        a.It is changed in both branches with different content.
+        b.It is changed in one branch but deleted in another branch.
+        c.It was absent at the split point but present in both branches with different content.*/
+
+    /*situation a*/
+    // go through everyfile tracked by the head commit in the current branch
+    temp = current_branch->commit->tracked_files->head->next; // temp points at 1st file of the head commit of current branch
+    while (temp != current_branch->commit->tracked_files->head)
+    {
+        if (list_find_name(splitPoint->tracked_files, temp->name) != nullptr &&        // exist at split point
+            list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // exist in given branch
+        {
+            // a file existing in all current_branch, given_branch, splitpoint
+            if (temp->ref != list_find_name(givenBranch->commit->tracked_files, temp->name)->ref)
+            {
+                // this means the file is changed in both branches with different content
+                list_put(files_in_conflict, temp->name, list_find_name(givenBranch->commit->tracked_files, temp->name)->ref);
+            }
+        }
+        temp = temp->next;
+    }
+
+    /*situation b*/
+    // go through everyfile tracked by the split point commit
+    temp = splitPoint->tracked_files->head->next;
+    while (temp != splitPoint->tracked_files->head)
+    {
+        // if exist in current branch but deleted in given branch
+        if (list_find_name(givenBranch->commit->tracked_files, temp->name) == nullptr &&
+            list_find_name(current_branch->commit->tracked_files, temp->name) != nullptr)
+        {
+            // if changed in current branch
+            if (temp->ref != list_find_name(current_branch->commit->tracked_files, temp->name)->ref)
+            {
+                list_put(files_in_conflict, temp->name, string());
+            }
+        }
+        // or if exist in given branch bur deleted in current branch
+        else if (list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr &&
+                 list_find_name(current_branch->commit->tracked_files, temp->name) == nullptr)
+        {
+            // if changed in given branch
+            if (temp->ref != list_find_name(givenBranch->commit->tracked_files, temp->name)->ref)
+            {
+                list_put(files_in_conflict, temp->name, list_find_name(givenBranch->commit->tracked_files, temp->name)->ref);
+            }
+        }
+        temp = temp->next;
+    }
+
+    /*situation c*/
+    // go through everyfile tracked by the head commit in the current branch
+    temp = current_branch->commit->tracked_files->head->next; // temp points at 1st file of the head commit of current branch
+    while (temp != current_branch->commit->tracked_files->head)
+    {
+        if (list_find_name(splitPoint->tracked_files, temp->name) == nullptr &&        // absent at split point
+            list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // exist in given branch
+        {
+            if (temp->ref != list_find_name(givenBranch->commit->tracked_files, temp->name)->ref)
+            {
+                // this means the file is newly created in both branches with different content
+                list_put(files_in_conflict, temp->name, list_find_name(givenBranch->commit->tracked_files, temp->name)->ref);
+            }
+        }
+        temp = temp->next;
+    }
+
+    // Replace the content of these files in the current working directory by the conflict resolution marker:
+    // go through all of these files
+    temp = files_in_conflict->head->next;
+    while (temp != files_in_conflict->head)
+    {
+        /* code */
+        add_conflict_marker(temp->name, temp->ref);
+        add(temp->name, staged_files, tracked_files, head_commit);
+        stage_content(temp->name);
+        temp = temp->next;
+    }
+
+    if (list_size(files_in_conflict) != 0)
+        cout << msg_encountered_merge_conflict << endl;
+
+    // remember to delete the temporary list
+    list_delete(files_in_conflict);
+
+    /*After processing the files, create a merge commit with message Merged [given branch name] into [current branch name].*/
+    string commitMsg = "Merged " + givenBranch->name + " into " + current_branch->name + ".";
+    commit(commitMsg, current_branch, staged_files, tracked_files, head_commit);
+    head_commit->second_parent = givenBranch->commit;
+
+    return true;
 }
