@@ -537,8 +537,10 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
             else // this means this file is tracked by the given commit, check whether content is same
             {
                 if (get_sha1(temp->name) != theFileInGivenCommit->ref)
+                {
                     cout << msg_untracked_file << endl;
-                return false;
+                    return false;
+                }
             }
         }
         temp = temp->next;
