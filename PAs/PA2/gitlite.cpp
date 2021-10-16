@@ -675,6 +675,24 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
         return true;
     }
 
+    /*Traverse cwd_files, if there exists a file that is not tracked in the head commit of the current branch
+    but tracked in the head commit of the given branch,
+    print There is an untracked file in the way; delete it, or add and commit it first. and return false.*/
+    Blob *temp = cwd_files->head->next;
+    while (temp != cwd_files->head) // Traverse cwd_files
+    {
+        if (list_find_name(current_branch->commit->tracked_files, temp->name) == nullptr) // a file that is not tracked in the head commit of the current branch
+        {
+            if (list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // but tracked in the head commit of the given branch
+            {
+                cout << msg_untracked_file << endl;
+                return false;
+            }
+        }
+
+        temp = temp->next;
+    }
+
     /*If the split point is the head commit of the current branch,
     then all changes in the current branch exist in the given branch (the given branch is ahead of the current branch).
     Simply set the state of the repository to the head commit of the given branch (using one command above).
@@ -696,24 +714,6 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
 
     /*Otherwise, the split point is neither the head commit of the current branch or the head commit of the given branch.
     Their history has diverged, like the above example. We need to incorporate the latest changes from both branches.*/
-
-    /*Traverse cwd_files, if there exists a file that is not tracked in the head commit of the current branch
-    but tracked in the head commit of the given branch,
-    print There is an untracked file in the way; delete it, or add and commit it first. and return false.*/
-    Blob *temp = cwd_files->head->next;
-    while (temp != cwd_files->head) // Traverse cwd_files
-    {
-        if (list_find_name(current_branch->commit->tracked_files, temp->name) == nullptr) // a file that is not tracked in the head commit of the current branch
-        {
-            if (list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // but tracked in the head commit of the given branch
-            {
-                cout << msg_untracked_file << endl;
-                return false;
-            }
-        }
-
-        temp = temp->next;
-    }
 
     /*Otherwise, proceed to merge the two branches with rules below.
     A general idea is to incorporate the latest changes from both branches.*/
@@ -826,10 +826,16 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
             list_find_name(givenBranch->commit->tracked_files, temp->name) != nullptr) // exist in given branch
         {
             // a file existing in all current_branch, given_branch, splitpoint
-            if (temp->ref != list_find_name(givenBranch->commit->tracked_files, temp->name)->ref)
+            // the file is modified in both branches
+            if (temp->ref != list_find_name(splitPoint->tracked_files, temp->name)->ref &&
+                list_find_name(givenBranch->commit->tracked_files, temp->name)->ref != list_find_name(splitPoint->tracked_files, temp->name)->ref)
             {
-                // this means the file is changed in both branches with different content
-                list_put(files_in_conflict, temp->name, list_find_name(givenBranch->commit->tracked_files, temp->name)->ref);
+                if (temp->ref != list_find_name(givenBranch->commit->tracked_files, temp->name)->ref)
+                {
+
+                    // this means the file is changed in both branches with different content
+                    list_put(files_in_conflict, temp->name, list_find_name(givenBranch->commit->tracked_files, temp->name)->ref);
+                }
             }
         }
         temp = temp->next;
