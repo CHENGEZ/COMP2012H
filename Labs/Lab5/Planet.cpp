@@ -16,7 +16,28 @@ using namespace std;
 void Planet::determine_collision()
 {
 	// START OF YOUR IMPLEMENTATION
-
+	for (int i = 0; i < MAX_PLANETS; i++)
+	{
+		if (i != this->uid)
+		{
+			if (std::hypot(planets[i].x - this->x, planets[i].y - this->y) < 0.1)
+			{
+				if (planets[i].mass == this->mass)
+				{
+					planets[i].flag_deactivate = true;
+					this->flag_deactivate = true;
+				}
+				else if (planets[i].mass < this->mass)
+				{
+					planets[i].flag_deactivate = true;
+				}
+				else
+				{
+					this->flag_deactivate = true;
+				}
+			}
+		}
+	}
 	// END OF YOUR IMPLEMENTATION
 }
 
@@ -27,6 +48,17 @@ void Planet::determine_collision()
 void Planet::update_acceleration()
 {
 	// START OF YOUR IMPLEMENTATION
+	this->ax = 0;
+	this->ay = 0;
+	for (int j = 0; j < MAX_PLANETS; j++)
+	{
+		if (planets[j].activated && j != this->uid)
+		{
+			long double distance = std::hypot(this->x - planets[j].x, this->y - planets[j].y);
+			this->ax += planets[j].mass * (planets[j].x - this->x) / (distance * distance * distance);
+			this->ay += planets[j].mass * (planets[j].y - this->y) / (distance * distance * distance);
+		}
+	}
 
 	// END OF YOUR IMPLEMENTATION
 }
@@ -39,7 +71,8 @@ void Planet::update_acceleration()
 void Planet::update_velocity()
 {
 	// START OF YOUR IMPLEMENTATION
-
+	this->vx += this->ax / (STEPS * FPS);
+	this->vy += this->ay / (STEPS * FPS);
 	// END OF YOUR IMPLEMENTATION
 }
 
@@ -49,6 +82,7 @@ void Planet::update_velocity()
 void Planet::update_displacement()
 {
 	// START OF YOUR IMPLEMENTATION
-
+	this->x += this->vx / (STEPS * FPS);
+	this->y += this->vy / (STEPS * FPS);
 	// END OF YOUR IMPLEMENTATION
 }
