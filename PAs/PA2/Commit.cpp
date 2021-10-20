@@ -64,7 +64,7 @@ Blob *list_put(List *list, const string &name, const string &ref)
         /* insert it to the correct position */
         while (temp->name < name)
         {
-            if (temp->next == list->head) //this means the name of the last node is still smaller than the new one
+            if (temp->next == list->head) // this means the name of the last node is still smaller than the new one
             {
                 list_push_back(list, newBlob);
                 return newBlob;
@@ -102,7 +102,7 @@ Blob *list_put(List *list, const string &name, Commit *commit)
         /* insert it to the correct position */
         while (temp->name < name)
         {
-            if (temp->next == list->head) //this means the name of the last node is still smaller than the new one
+            if (temp->next == list->head) // this means the name of the last node is still smaller than the new one
             {
                 list_push_back(list, newBlob);
                 return newBlob;
@@ -237,6 +237,98 @@ void commit_print(const Commit *commit)
          << commit->message;
 }
 
+/* find latest ancestor */
+void find_ancestor_commits(List *&reachable_commits_for_this_offspring, Commit *offspring)
+{
+    if (offspring == nullptr)
+        return;
+
+    list_put(reachable_commits_for_this_offspring, offspring->commit_id, offspring);
+
+    find_ancestor_commits(reachable_commits_for_this_offspring, offspring->parent);
+    find_ancestor_commits(reachable_commits_for_this_offspring, offspring->second_parent);
+}
+
+Commit *get_lca(Commit *c1, Commit *c2)
+{
+    List *reachable_commits_of_c1 = list_new();
+    List *reachable_commits_of_c2 = list_new();
+    List *common_reachable_commits = list_new();
+    List *reachable_commits_of_the_other_commit = list_new();
+
+    find_ancestor_commits(reachable_commits_of_c1, c1); // after this function call, all reachable commits of c1 should be stored in the list reachable_commits_of_c1
+    find_ancestor_commits(reachable_commits_of_c2, c2); // after this function call, all reachable commits of c2 should be stored in the list reachable_commits_of_c2
+
+    // go through the two lists of reachable commits to find all common ancestors of c1 and c2
+    Blob *temp1 = reachable_commits_of_c1->head->next;
+    Blob *temp2 = reachable_commits_of_c2->head->next;
+
+    while (temp1 != reachable_commits_of_c1->head)
+    {
+        temp2 = reachable_commits_of_c2->head->next;
+
+        while (temp2 != reachable_commits_of_c2->head)
+        {
+            if (temp2->name == temp1->name)
+            {
+                list_put(common_reachable_commits, temp1->name, temp1->commit);
+            }
+            temp2 = temp2->next;
+        }
+
+        temp1 = temp1->next;
+    }
+    // after exiting this loop, all common ancestors of c1 and c2 should be stored in the list common_reachable_commits
+    // now we need to determine which one is the latest
+
+    // cout << "the size of reachable commits of c1 is " << list_size(reachable_commits_of_c1) << endl;
+    // cout << "the size of reachable commits of c2 is " << list_size(reachable_commits_of_c2) << endl;
+    // cout << "the size of common reachable commits of c1 and c2 is " << list_size(common_reachable_commits) << endl;
+
+    Commit *returnLCA = nullptr;
+    Blob *thisCommonAncestor = common_reachable_commits->head->next;
+    // go through all the common ancestors, and find ONE that is NOT reachable by any other common_reachable_commit except itself
+    while (thisCommonAncestor != common_reachable_commits->head)
+    {
+        // cout << "entered outerloop" << endl;
+        Blob *anotherCommonAncestor = thisCommonAncestor->next;
+        bool reachableByAnother = false;
+        while (anotherCommonAncestor != thisCommonAncestor)
+        {
+            if (anotherCommonAncestor == common_reachable_commits->head)
+            {
+                anotherCommonAncestor = anotherCommonAncestor->next;
+                continue;
+            }
+            list_clear(reachable_commits_of_the_other_commit);
+            find_ancestor_commits(reachable_commits_of_the_other_commit, anotherCommonAncestor->commit);
+            if (list_find_name(reachable_commits_of_the_other_commit, thisCommonAncestor->name) != nullptr)
+            {
+                // this means for "this common ancestor", it is reachable by one of the others
+                reachableByAnother = true;
+                break;
+            }
+            anotherCommonAncestor = anotherCommonAncestor->next;
+        }
+
+        if (!reachableByAnother)
+        {
+            returnLCA = thisCommonAncestor->commit;
+            break;
+        }
+
+        thisCommonAncestor = thisCommonAncestor->next;
+    }
+
+    list_delete(reachable_commits_of_c1);
+    list_delete(reachable_commits_of_c2);
+    list_delete(common_reachable_commits);
+    list_delete(reachable_commits_of_the_other_commit);
+
+    return returnLCA;
+}
+
+/*
 Commit *get_lca(Commit *c1, Commit *c2)
 {
     Commit *temp1 = c1;
@@ -255,3 +347,4 @@ Commit *get_lca(Commit *c1, Commit *c2)
 
     return nullptr;
 }
+*/
