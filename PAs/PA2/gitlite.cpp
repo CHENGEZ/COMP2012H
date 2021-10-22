@@ -467,8 +467,10 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
             else // this means this file was tracked by the head commit of the target branch, check whether content is same
             {
                 if (get_sha1(temp->name) != theFileInTargetBranch->ref) // content is different, will overwrite
+                {
                     cout << msg_untracked_file << endl;
-                return false;
+                    return false;
+                }
             }
         }
         temp = temp->next;
