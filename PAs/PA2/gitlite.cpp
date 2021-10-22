@@ -464,13 +464,10 @@ bool checkout(const string &branch_name, Blob *&current_branch, const List *bran
             {
                 // this means this file wasn't tracked by the head commit of the target branch, so will not overwrite
             }
-            else // this means this file was tracked by the head commit of the target branch, check whether content is same
+            else // this means this file was tracked by the head commit of the target branch, will overwrite
             {
-                if (get_sha1(temp->name) != theFileInTargetBranch->ref) // content is different, will overwrite
-                {
-                    cout << msg_untracked_file << endl;
-                    return false;
-                }
+                cout << msg_untracked_file << endl;
+                return false;
             }
         }
         temp = temp->next;
@@ -536,13 +533,10 @@ bool reset(Commit *commit, Blob *current_branch, List *staged_files, List *track
             {
                 // this means this file is not tracked in the given commit, so will not overwrite
             }
-            else // this means this file is tracked by the given commit, check whether content is same
+            else // this means this file is tracked by the given commit, satisfies the requirement
             {
-                if (get_sha1(temp->name) != theFileInGivenCommit->ref)
-                {
-                    cout << msg_untracked_file << endl;
-                    return false;
-                }
+                cout << msg_untracked_file << endl;
+                return false;
             }
         }
         temp = temp->next;
