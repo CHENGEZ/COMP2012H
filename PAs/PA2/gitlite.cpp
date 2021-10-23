@@ -761,11 +761,14 @@ bool merge(const string &branch_name, Blob *&current_branch, List *branches, Lis
     temp = givenBranch->commit->tracked_files->head->next;
     while (temp != givenBranch->commit->tracked_files->head)
     {
-        if (list_find_name(splitPoint->tracked_files, temp->name) == nullptr) // the file was not presesnt at the split point
+        if (list_find_name(current_branch->commit->tracked_files, temp->name) == nullptr)
         {
-            checkout(temp->name, givenBranch->commit);                 // checkout the file
-            add(temp->name, staged_files, tracked_files, head_commit); // stage the files for addition.
-            stage_content(temp->name);                                 // In addition, you need to call stage_content(filename) explicitly to modify the index in the .gitlite directory.
+            if (list_find_name(splitPoint->tracked_files, temp->name) == nullptr) // the file was not presesnt at the split point
+            {
+                checkout(temp->name, givenBranch->commit);                 // checkout the file
+                add(temp->name, staged_files, tracked_files, head_commit); // stage the files for addition.
+                stage_content(temp->name);                                 // In addition, you need to call stage_content(filename) explicitly to modify the index in the .gitlite directory.
+            }
         }
         temp = temp->next;
     }
