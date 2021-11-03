@@ -1,6 +1,6 @@
 /**
-* Do not modify
-*/
+ * Do not modify
+ */
 
 #ifndef CITY_H
 #define CITY_H
@@ -14,13 +14,16 @@
 #include <string>
 #include <ostream>
 
-class City {
+class City
+{
 public:
-    struct Coordinates {
+    struct Coordinates
+    {
         int x;
         int y;
 
-        friend std::ostream &operator<<(std::ostream &output, const Coordinates &coordinates) {
+        friend std::ostream &operator<<(std::ostream &output, const Coordinates &coordinates)
+        {
             output << "(" << coordinates.x << "," << coordinates.y << ")";
             return output;
         }
@@ -29,8 +32,8 @@ public:
     explicit City(int size);
     explicit City(const std::string &filename);
     ~City();
-    
-    void save(const std::string& filename) const;
+
+    void save(const std::string &filename) const;
 
     int get_turn() const;
     int get_budget() const;
@@ -51,23 +54,28 @@ public:
 
     void move_to_next_turn();
 
-    inline Building *get_at(int x, int y) const {
+    inline Building *get_at(int x, int y) const
+    {
         return get_at(Coordinates{x, y});
     };
 
-    inline bool is_empty_at(int x, int y) const {
+    inline bool is_empty_at(int x, int y) const
+    {
         return is_empty_at(Coordinates{x, y});
     };
 
-    inline bool can_construct(Building::Type type, int x, int y) const {
+    inline bool can_construct(Building::Type type, int x, int y) const
+    {
         return can_construct(type, Coordinates{x, y});
     };
 
-    inline bool construct_at(Building::Type type, int x, int y) {
+    inline bool construct_at(Building::Type type, int x, int y)
+    {
         return construct_at(type, Coordinates{x, y});
     };
 
-    inline bool demolish_at(int x, int y) {
+    inline bool demolish_at(int x, int y)
+    {
         return demolish_at(Coordinates{x, y});
     };
 
