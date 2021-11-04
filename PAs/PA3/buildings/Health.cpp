@@ -1,5 +1,4 @@
-#include "buildings/Health.h"
-#include "City.h"
+#include "Health.h"
 
 Health::Health(City &city) : Building(city) {}
 

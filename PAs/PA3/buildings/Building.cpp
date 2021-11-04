@@ -1,5 +1,5 @@
-#include "buildings/Building.h"
-#include "City.h"
+#include "Building.h"
+#include "../City.h"
 
 Building::Building(City &city) : city(city) {}
 

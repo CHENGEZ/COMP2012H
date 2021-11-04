@@ -1,5 +1,5 @@
-#include "buildings/Clinic.h"
-#include "City.h"
+#include "Clinic.h"
+#include "../City.h"
 
 using namespace std;
 

@@ -1,5 +1,5 @@
-#include "buildings/Apartment.h"
-#include "City.h"
+#include "Apartment.h"
+#include "../City.h"
 using namespace std;
 
 Apartment::Apartment(City &city, int population) : Residential(city, population) {}

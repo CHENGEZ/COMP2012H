@@ -1,5 +1,5 @@
-#include "buildings/GoldMine.h"
-#include "City.h"
+#include "GoldMine.h"
+#include "../City.h"
 
 using namespace std;
 

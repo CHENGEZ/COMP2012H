@@ -1,4 +1,4 @@
-#include "buildings/Revenue.h"
+#include "Revenue.h"
 
 Revenue::Revenue(City &city) : Building(city) {}
 

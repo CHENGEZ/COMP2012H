@@ -1,5 +1,5 @@
-#include "buildings/Hospital.h"
-#include "City.h"
+#include "Hospital.h"
+#include "../City.h"
 using namespace std;
 
 Hospital::Hospital(City &city) : Health(city) {}

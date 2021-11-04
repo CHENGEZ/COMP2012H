@@ -1,4 +1,4 @@
-#include "buildings/Residential.h"
+#include "Residential.h"
 
 Residential::Residential(City &city, int population) : Building(city)
 {
@@ -10,7 +10,7 @@ Building::Category Residential::get_category() const
     return this->category;
 }
 
-Residential::get_population_growth_rate_contribution() const
+int Residential::get_population_growth_rate_contribution() const
 {
     return -get_population();
 }

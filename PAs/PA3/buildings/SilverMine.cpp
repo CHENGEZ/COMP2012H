@@ -1,5 +1,5 @@
-#include "buildings/SilverMine.h"
-#include "City.h"
+#include "SilverMine.h"
+#include "../City.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ std::string SilverMine::get_short_information() const
     cout << SILVER_1_1 << Building::number_neighboring_population() + city.get_population() << endl;
 }
 
-SilverMine::get_revenue() const
+int SilverMine::get_revenue() const
 {
     return Building::number_neighboring_population() + city.get_population();
 }
