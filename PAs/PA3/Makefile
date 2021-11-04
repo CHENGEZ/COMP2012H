@@ -10,7 +10,7 @@ ifeq (Windows_NT, $(OS))
 RM := rm
 SRCS := main_cli.cpp GameEngine.cpp City.cpp buildings\Building.cpp buildings\Health.cpp buildings\Revenue.cpp buildings\Residential.cpp buildings\Clinic.cpp buildings\Hospital.cpp buildings\SilverMine.cpp buildings\GoldMine.cpp buildings\House.cpp buildings\Apartment.cpp
 SUBMISSION := City.cpp buildings\Building.cpp buildings\Health.cpp buildings\Revenue.cpp buildings\Residential.cpp buildings\Clinic.cpp buildings\Hospital.cpp buildings\SilverMine.cpp buildings\GoldMine.cpp buildings\House.cpp buildings\Apartment.cpp buildings\Health.h buildings\Revenue.h buildings\Residential.h buildings\Clinic.h buildings\Hospital.h buildings\SilverMine.h buildings\GoldMine.h buildings\House.h buildings\Apartment.h
-ZIP := zip.exe
+ZIP := ./zip.exe
 
 else
 
@@ -34,7 +34,6 @@ $(OUT): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(ZIP_OUT): $(SUBMISSION)
-	$(RM) $(ZIP_OUT)
 	$(ZIP) $@ $^
 
 .PHONY: clean
