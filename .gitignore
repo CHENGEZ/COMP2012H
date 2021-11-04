@@ -11,3 +11,4 @@ auto-testing/
 *.rar
 *.stackdump
 simplecity
+!zip.exe
