@@ -1,6 +1,6 @@
 #include "Residential.h"
 
-Residential::Residential(City &city) : Building(city) { this->population = 0; }
+Residential::Residential(City &city, int population) : Building(city) { this->population = 0; }
 
 Building::Category Residential::get_category() const
 {

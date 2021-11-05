@@ -10,7 +10,7 @@ private:
     int population;
 
 protected:
-    Residential(City &city);
+    Residential(City &city, int population);
 
 public:
     /*no implementation needed*/
