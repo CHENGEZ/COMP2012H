@@ -215,9 +215,241 @@ City::~City()
     this->grid = nullptr;
 }
 
+int determineNumberLength(int number)
+{
+    if (number / 1000000000 >= 1)
+        return 10;
+    if (number / 100000000 >= 1)
+        return 9;
+    if (number / 10000000 >= 1)
+        return 8;
+    if (number / 1000000 >= 1)
+        return 7;
+    if (number / 100000 >= 1)
+        return 6;
+    if (number / 10000 >= 1)
+        return 5;
+    if (number / 1000 >= 1)
+        return 4;
+    if (number / 100 >= 1)
+        return 3;
+    if (number / 10 >= 1)
+        return 2;
+
+    return 1;
+}
+
+void clearArray(char array[10])
+{
+    for (int i = 0; i < 10; i++)
+    {
+        array[i] = 0;
+    }
+}
+
+int convertNum2CharArray(int number, char array[10])
+{
+    clearArray(array);
+    int numberLength = determineNumberLength(number);
+    int firstDigit = 0, secondDigit = 0, thirdDigit = 0, forthDigit = 0, fifthDigit = 0, sixthDigit = 0, seventhDigit = 0, eighthDigit = 0, ninethDigit = 0, tenthDigit = 0;
+
+    switch (numberLength)
+    {
+    case 1:
+        firstDigit = number / 1;
+        break;
+    case 2:
+        firstDigit = number / 10;
+        secondDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 3:
+        firstDigit = number / 100;
+        secondDigit = number / 10 - (number / 100) * 10;
+        thirdDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 4:
+        firstDigit = number / 1000;
+        secondDigit = number / 100 - (number / 1000) * 10;
+        thirdDigit = number / 10 - (number / 100) * 10;
+        forthDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 5:
+        firstDigit = number / 10000;
+        secondDigit = number / 1000 - (number / 10000) * 10;
+        thirdDigit = number / 100 - (number / 1000) * 10;
+        forthDigit = number / 10 - (number / 100) * 10;
+        fifthDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 6:
+        firstDigit = number / 100000;
+        secondDigit = number / 10000 - (number / 100000) * 10;
+        thirdDigit = number / 1000 - (number / 10000) * 10;
+        forthDigit = number / 100 - (number / 1000) * 10;
+        fifthDigit = number / 10 - (number / 100) * 10;
+        sixthDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 7:
+        firstDigit = number / 1000000;
+        secondDigit = number / 100000 - (number / 1000000) * 10;
+        thirdDigit = number / 10000 - (number / 100000) * 10;
+        forthDigit = number / 1000 - (number / 10000) * 10;
+        fifthDigit = number / 100 - (number / 1000) * 10;
+        sixthDigit = number / 10 - (number / 100) * 10;
+        seventhDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 8:
+        firstDigit = number / 10000000;
+        secondDigit = number / 1000000 - (number / 10000000) * 10;
+        thirdDigit = number / 100000 - (number / 1000000) * 10;
+        forthDigit = number / 10000 - (number / 100000) * 10;
+        fifthDigit = number / 1000 - (number / 10000) * 10;
+        sixthDigit = number / 100 - (number / 1000) * 10;
+        seventhDigit = number / 10 - (number / 100) * 10;
+        eighthDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 9:
+        firstDigit = number / 100000000;
+        secondDigit = number / 10000000 - (number / 100000000) * 10;
+        thirdDigit = number / 1000000 - (number / 10000000) * 10;
+        forthDigit = number / 100000 - (number / 1000000) * 10;
+        fifthDigit = number / 10000 - (number / 100000) * 10;
+        sixthDigit = number / 1000 - (number / 10000) * 10;
+        seventhDigit = number / 100 - (number / 1000) * 10;
+        eighthDigit = number / 10 - (number / 100) * 10;
+        ninethDigit = number / 1 - (number / 10) * 10;
+        break;
+    case 10:
+        firstDigit = number / 1000000000;
+        secondDigit = number / 100000000 - (number / 1000000000) * 10;
+        thirdDigit = number / 10000000 - (number / 100000000) * 10;
+        forthDigit = number / 1000000 - (number / 10000000) * 10;
+        fifthDigit = number / 100000 - (number / 1000000) * 10;
+        sixthDigit = number / 10000 - (number / 100000) * 10;
+        seventhDigit = number / 1000 - (number / 10000) * 10;
+        eighthDigit = number / 100 - (number / 1000) * 10;
+        ninethDigit = number / 10 - (number / 100) * 10;
+        tenthDigit = number / 1 - (number / 10) * 10;
+        break;
+
+    default:
+        break;
+    }
+
+    array[0] = (char)firstDigit + 48;
+    array[1] = (char)secondDigit + 48;
+    array[2] = (char)thirdDigit + 48;
+    array[3] = (char)forthDigit + 48;
+    array[4] = (char)fifthDigit + 48;
+    array[5] = (char)sixthDigit + 48;
+    array[6] = (char)seventhDigit + 48;
+    array[7] = (char)eighthDigit + 48;
+    array[8] = (char)ninethDigit + 48;
+    array[9] = (char)tenthDigit + 48;
+
+    return numberLength;
+}
+
 void City::save(const std::string &filename) const
 {
-    /**/
+    ofstream ofs;
+    ofs.open(filename);
+
+    int thisNumberLength = 0;
+    int thisResidentialPop = 0;
+    Building::Type thisBuildingType;
+
+    char numberArray[10] = {};
+
+    /* grid_size */
+    thisNumberLength = convertNum2CharArray(grid_size, numberArray);
+    for (int i = 0; i < thisNumberLength; i++)
+    {
+        ofs.put(numberArray[i]);
+    }
+    ofs.put('\n');
+
+    /* budget */
+    thisNumberLength = convertNum2CharArray(budget, numberArray);
+    for (int i = 0; i < thisNumberLength; i++)
+    {
+        ofs.put(numberArray[i]);
+    }
+    ofs.put('\n');
+
+    /*turn*/
+    thisNumberLength = convertNum2CharArray(turn, numberArray);
+    for (int i = 0; i < thisNumberLength; i++)
+    {
+        ofs.put(numberArray[i]);
+    }
+    ofs.put('\n');
+
+    /* grid */
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            if (grid[x][y] == nullptr)
+            {
+                ofs.put('0');
+                ofs.put('\n');
+            }
+            if (grid[x][y] != nullptr)
+            {
+                if (grid[x][y]->get_category() == Building::Category::RESIDENTIAL) // residential building: store both building type and population
+                {
+                    thisBuildingType = grid[x][y]->get_type();
+                    switch (thisBuildingType)
+                    {
+                    case Building::Type::APARTMENT:
+                        ofs.put('6');
+                        ofs.put(' ');
+                        break;
+                    case Building::Type::HOUSE:
+                        ofs.put('5');
+                        ofs.put(' ');
+                        break;
+                    default:
+                        break;
+                    }
+
+                    thisNumberLength = convertNum2CharArray(grid[x][y]->get_population(), numberArray);
+                    for (int i = 0; i < thisNumberLength; i++)
+                    {
+                        ofs.put(numberArray[i]);
+                    }
+                    ofs.put('\n');
+                }
+                else // not residential building, just store building type
+                {
+                    thisBuildingType = grid[x][y]->get_type();
+                    switch (thisBuildingType)
+                    {
+                    case Building::Type::CLINIC:
+                        ofs.put('1');
+                        ofs.put('\n');
+                        break;
+                    case Building::Type::GOLD_MINE:
+                        ofs.put('4');
+                        ofs.put('\n');
+                        break;
+                    case Building::Type::HOSPITAL:
+                        ofs.put('2');
+                        ofs.put('\n');
+                        break;
+                    case Building::Type::SILVER_MINE:
+                        ofs.put('3');
+                        ofs.put('\n');
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    ofs.close();
 }
 
 int City::get_turn() const
