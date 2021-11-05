@@ -1,6 +1,6 @@
 #include "Residential.h"
 
-Residential::Residential(City &city, int population) : Building(city) { this->population = 0; }
+Residential::Residential(City &city, int population) : Building(city), population(population) {}
 
 Building::Category Residential::get_category() const
 {
@@ -31,4 +31,3 @@ void Residential::increase_population(int population)
 int Residential::get_revenue() const { return 0; }
 int Residential::get_max_population() const { return 0; }
 int Residential::get_population_growth() const { return 0; }
-void Residential::increase_population(int population) { population = 0; }
