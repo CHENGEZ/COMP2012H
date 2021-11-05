@@ -42,7 +42,17 @@ City::City(const std::string &filename)
 
     /* grid_size*/
     ifs.getline(thisLine, 11);
-    grid_size = ((int)thisLine[0] - 48) * 10 + (int)thisLine[1] - 48;
+    for (numberLength = 0; numberLength < 11; numberLength++)
+    {
+        if (thisLine[numberLength] == '\0')
+        {
+            break;
+        }
+    }
+    for (int i = 0; i <= numberLength - 1; i++)
+    {
+        grid_size += ((int)thisLine[numberLength - (i + 1)] - 48) * pow(10, i);
+    }
 
     /* budget */
     ifs.getline(thisLine, 11);
@@ -104,6 +114,7 @@ City::City(const std::string &filename)
 
     /* Allocate the 2D array of grid cells with dimensions size by size */
     this->grid = new Building **[grid_size];
+
     for (int j = 0; j < grid_size; j++)
     {
         grid[j] = new Building *[grid_size];
