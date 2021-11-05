@@ -155,25 +155,24 @@ City::City(const std::string &filename)
     {
         for (int y = 0; y < grid_size; y++)
         {
-            if (x - 1 >= 0 && grid[x - 1][y] != nullptr)
+            if (grid[x][y] != nullptr)
             {
-                grid[x - 1][y]->register_neighboring_building(grid[x][y]);
-                grid[x][y]->register_neighboring_building(grid[x - 1][y]);
-            }
-            if (x + 1 <= grid_size - 1 && grid[x + 1][y] != nullptr)
-            {
-                grid[x + 1][y]->register_neighboring_building(grid[x][y]);
-                grid[x][y]->register_neighboring_building(grid[x + 1][y]);
-            }
-            if (y - 1 >= 0 && grid[x][y - 1] != nullptr)
-            {
-                grid[x][y - 1]->register_neighboring_building(grid[x][y]);
-                grid[x][y]->register_neighboring_building(grid[x][y - 1]);
-            }
-            if (y + 1 <= grid_size - 1 && grid[x][y + 1] != nullptr)
-            {
-                grid[x][y + 1]->register_neighboring_building(grid[x][y]);
-                grid[x][y]->register_neighboring_building(grid[x][y + 1]);
+                if (x - 1 >= 0 && grid[x - 1][y] != nullptr)
+                {
+                    grid[x - 1][y]->register_neighboring_building(grid[x][y]);
+                }
+                if (x + 1 <= grid_size - 1 && grid[x + 1][y] != nullptr)
+                {
+                    grid[x + 1][y]->register_neighboring_building(grid[x][y]);
+                }
+                if (y - 1 >= 0 && grid[x][y - 1] != nullptr)
+                {
+                    grid[x][y - 1]->register_neighboring_building(grid[x][y]);
+                }
+                if (y + 1 <= grid_size - 1 && grid[x][y + 1] != nullptr)
+                {
+                    grid[x][y + 1]->register_neighboring_building(grid[x][y]);
+                }
             }
         }
     }
