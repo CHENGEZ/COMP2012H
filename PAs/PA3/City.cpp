@@ -1,5 +1,7 @@
 #include "City.h"
 #include <fstream>
+#include <iostream>
+using namespace std;
 
 City::City(int size)
 {
@@ -78,7 +80,8 @@ int City::get_revenue() const
     {
         for (int y = 0; y < grid_size; y++)
         {
-            totalRevenue += grid[x][y]->get_revenue();
+            if (grid[x][y] != nullptr)
+                totalRevenue += grid[x][y]->get_revenue();
         }
     }
 
@@ -92,7 +95,8 @@ int City::get_population() const
     {
         for (int y = 0; y < grid_size; y++)
         {
-            totalPopulation += grid[x][y]->get_population();
+            if (grid[x][y] != nullptr)
+                totalPopulation += grid[x][y]->get_population();
         }
     }
     return totalPopulation;
@@ -105,7 +109,8 @@ int City::get_max_population() const
     {
         for (int y = 0; y < grid_size; y++)
         {
-            maxPopulation += grid[x][y]->get_max_population();
+            if (grid[x][y] != nullptr)
+                maxPopulation += grid[x][y]->get_max_population();
         }
     }
     return maxPopulation;
@@ -118,7 +123,8 @@ int City::get_population_growth() const
     {
         for (int y = 0; y < grid_size; y++)
         {
-            sum_of_population_growth += grid[x][y]->get_population_growth();
+            if (grid[x][y] != nullptr)
+                sum_of_population_growth += grid[x][y]->get_population_growth();
         }
     }
     return sum_of_population_growth;
@@ -131,7 +137,8 @@ int City::get_population_growth_rate() const
     {
         for (int y = 0; y < grid_size; y++)
         {
-            sum_of_contribution += grid[x][y]->get_population_growth_rate_contribution();
+            if (grid[x][y] != nullptr)
+                sum_of_contribution += grid[x][y]->get_population_growth_rate_contribution();
         }
     }
     return sum_of_contribution;
@@ -254,155 +261,58 @@ bool City::construct_at(Building::Type type, const Coordinates &coordinates)
     case Building::Type::APARTMENT:
         grid[coordinates.x][coordinates.y] = new Apartment(*this, 0);
         this->budget -= 300;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     case Building::Type::HOUSE:
         grid[coordinates.x][coordinates.y] = new House(*this, 0);
         this->budget -= 50;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     case Building::Type::CLINIC:
+        cout << "before" << endl;
         grid[coordinates.x][coordinates.y] = new Clinic(*this);
+        cout << "after" << endl;
         this->budget -= 50;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     case Building::Type::HOSPITAL:
         grid[coordinates.x][coordinates.y] = new Hospital(*this);
         this->budget -= 500;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     case Building::Type::GOLD_MINE:
         grid[coordinates.x][coordinates.y] = new GoldMine(*this);
         this->budget -= 400;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     case Building::Type::SILVER_MINE:
         grid[coordinates.x][coordinates.y] = new SilverMine(*this);
         this->budget -= 50;
-        if (coordinates.x - 1 >= 0)
-        {
-            grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
-        }
-        if (coordinates.x + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
-        }
-        if (coordinates.y - 1 >= 0)
-        {
-            grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
-        }
-        if (coordinates.y + 1 <= grid_size - 1)
-        {
-            grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
-            grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
-        }
         break;
 
     default:
         break;
+    }
+
+    if (coordinates.x - 1 >= 0 && grid[coordinates.x - 1][coordinates.y] != nullptr)
+    {
+        grid[coordinates.x - 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
+        grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
+    }
+    if (coordinates.x + 1 <= grid_size - 1 && grid[coordinates.x + 1][coordinates.y] != nullptr)
+    {
+        grid[coordinates.x + 1][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
+        grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
+    }
+    if (coordinates.y - 1 >= 0 && grid[coordinates.x][coordinates.y - 1] != nullptr)
+    {
+        grid[coordinates.x][coordinates.y - 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
+        grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
+    }
+    if (coordinates.y + 1 <= grid_size - 1 && grid[coordinates.x][coordinates.y + 1] != nullptr)
+    {
+        grid[coordinates.x][coordinates.y + 1]->register_neighboring_building(grid[coordinates.x][coordinates.y]);
+        grid[coordinates.x][coordinates.y]->register_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
     }
 
     return true;
@@ -418,22 +328,22 @@ bool City::demolish_at(const Coordinates &coordinates)
 
     grid[coordinates.x][coordinates.y]->~Building();
 
-    if (coordinates.x - 1 >= 0)
+    if (coordinates.x - 1 >= 0 && grid[coordinates.x - 1][coordinates.y] != nullptr)
     {
         grid[coordinates.x - 1][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
         grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
     }
-    if (coordinates.x + 1 <= grid_size - 1)
+    if (coordinates.x + 1 <= grid_size - 1 && grid[coordinates.x + 1][coordinates.y] != nullptr)
     {
         grid[coordinates.x + 1][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
         grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
     }
-    if (coordinates.y - 1 >= 0)
+    if (coordinates.y - 1 >= 0 && grid[coordinates.x][coordinates.y - 1] != nullptr)
     {
         grid[coordinates.x][coordinates.y - 1]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
         grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
     }
-    if (coordinates.y + 1 <= grid_size - 1)
+    if (coordinates.y + 1 <= grid_size - 1 && grid[coordinates.x][coordinates.y + 1] != nullptr)
     {
         grid[coordinates.x][coordinates.y + 1]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
         grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
@@ -453,7 +363,10 @@ void City::move_to_next_turn()
     {
         for (int y = 0; y < grid_size; y++)
         {
-            this->budget += grid[x][y]->get_revenue();
+            if (grid[x][y] != nullptr)
+            {
+                this->budget += grid[x][y]->get_revenue();
+            }
         }
     }
 
@@ -463,8 +376,11 @@ void City::move_to_next_turn()
     {
         for (int y = 0; y < grid_size; y++)
         {
-            pop_growth_for_this_residential_building = grid[x][y]->get_population_growth();
-            grid[x][y]->increase_population(pop_growth_for_this_residential_building);
+            if (grid[x][y] != nullptr)
+            {
+                pop_growth_for_this_residential_building = grid[x][y]->get_population_growth();
+                grid[x][y]->increase_population(pop_growth_for_this_residential_building);
+            }
         }
     }
 }

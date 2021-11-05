@@ -43,9 +43,12 @@ int Building::number_neighboring_residential_buildings() const
     int number_neighboring_residential_buildings = 0;
     for (int i = 0; i < 4; i++)
     {
-        if (neighboring_buildings[i]->get_category() == Category::RESIDENTIAL)
+        if (neighboring_buildings[i] != nullptr)
         {
-            number_neighboring_residential_buildings++;
+            if (neighboring_buildings[i]->get_category() == Category::RESIDENTIAL)
+            {
+                number_neighboring_residential_buildings++;
+            }
         }
     }
     return number_neighboring_residential_buildings;
@@ -56,9 +59,12 @@ int Building::number_neighboring_health_buildings() const
     int number_neighboring_health_buildings = 0;
     for (int i = 0; i < 4; i++)
     {
-        if (neighboring_buildings[i]->get_category() == Category::HEALTH)
+        if (neighboring_buildings[i] != nullptr)
         {
-            number_neighboring_health_buildings++;
+            if (neighboring_buildings[i]->get_category() == Category::HEALTH)
+            {
+                number_neighboring_health_buildings++;
+            }
         }
     }
     return number_neighboring_health_buildings;
@@ -69,9 +75,12 @@ int Building::number_neighboring_gold_mines() const
     int number_neighboring_gold_mines = 0;
     for (int i = 0; i < 4; i++)
     {
-        if (neighboring_buildings[i]->get_type() == Building::Type::GOLD_MINE)
+        if (neighboring_buildings[i] != nullptr)
         {
-            number_neighboring_gold_mines++;
+            if (neighboring_buildings[i]->get_type() == Building::Type::GOLD_MINE)
+            {
+                number_neighboring_gold_mines++;
+            }
         }
     }
     return number_neighboring_gold_mines;
@@ -82,7 +91,10 @@ int Building::number_neighboring_population() const
     int sum_of_population = 0;
     for (int i = 0; i < 4; i++)
     {
-        sum_of_population += neighboring_buildings[i]->get_population();
+        if (neighboring_buildings[i] != nullptr)
+        {
+            sum_of_population += neighboring_buildings[i]->get_population();
+        }
     }
 
     return sum_of_population;
