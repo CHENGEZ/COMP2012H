@@ -22,12 +22,12 @@ public:
     /*implementation is needed*/
     Building::Category get_category() const;
     int get_population() const;
+    virtual int get_population_growth_rate_contribution() const;
+    virtual void increase_population(int population);
 
     /*dummy implementation will be needed*/
     virtual int get_revenue() const override;
     virtual int get_max_population() const override;
     virtual int get_population_growth() const override;
-    virtual int get_population_growth_rate_contribution() const override;
-    virtual void increase_population(int population) override;
 };
 #endif // RESIDENTIAL_H

@@ -6,7 +6,7 @@ Apartment::Apartment(City &city, int population) : Residential(city, population)
 
 Building::Type Apartment::get_type() const
 {
-    return this->type;
+    return Building::Type::APARTMENT;
 }
 
 int Apartment::get_cost() const
@@ -16,28 +16,15 @@ int Apartment::get_cost() const
 
 std::string Apartment::get_long_information() const
 {
-    cout << APARTMENT_HEADER << endl;
-    cout << APARTMENT_1_1 << Building::get_population() << endl;
-    cout << APARTMENT_2_1 << Building::get_max_population() << endl;
-    cout << APARTMENT_3_1 << endl;
-    cout << APARTMENT_4_1 << Building::get_population_growth_rate_contribution() << endl;
-    cout << APARTMENT_5_1 << endl;
-    cout << APARTMENT_6_1 << Building::get_population_growth() << APARTMENT_6_2
-         << Building::get_max_population() - Building::get_population() << APARTMENT_6_3 << endl;
-    cout << APARTMENT_7_1 << endl;
+    return APARTMENT_HEADER + '\n' + APARTMENT_1_1 + std::to_string(Building::get_population()) + '\n' + APARTMENT_2_1 + std::to_string(Building::get_max_population()) + '\n' + APARTMENT_3_1 + '\n' + APARTMENT_4_1 + std::to_string(Building::get_population_growth_rate_contribution()) + '\n' + APARTMENT_5_1 + '\n' + APARTMENT_6_1 + std::to_string(Building::get_population_growth()) + APARTMENT_6_2 + std::to_string(Building::get_max_population() - Building::get_population()) + APARTMENT_6_3 + '\n' + APARTMENT_7_1 + '\n';
 }
 
 std::string Apartment::get_short_information() const
 {
-    cout << APARTMENT_HEADER << endl;
-    cout << APARTMENT_1_1 << Building::get_population() << endl;
-    cout << APARTMENT_2_1 << Building::get_max_population() << endl;
-    cout << APARTMENT_4_1 << Building::get_population_growth_rate_contribution() << endl;
-    cout << APARTMENT_6_1 << Building::get_population_growth() << endl;
+    return APARTMENT_HEADER + '\n' + APARTMENT_1_1 + std::to_string(Building::get_population()) + '\n' + APARTMENT_2_1 + std::to_string(Building::get_max_population()) + '\n' + APARTMENT_4_1 + std::to_string(Building::get_population_growth_rate_contribution()) + '\n' + APARTMENT_6_1 + std::to_string(Building::get_population_growth()) + '\n';
 }
 
 int Apartment::get_revenue() const { return 0; }
-int Apartment::get_population() const { return Residential::population; }
 int Apartment::get_max_population() const { return 250 * (1 + Building::number_neighboring_residential_buildings()); }
 int Apartment::get_population_growth() const
 {

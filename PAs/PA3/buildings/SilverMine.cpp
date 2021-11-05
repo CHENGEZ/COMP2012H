@@ -7,7 +7,7 @@ SilverMine::SilverMine(City &city) : Revenue(city) {}
 
 Building::Type SilverMine::get_type() const
 {
-    return this->type;
+    return Building::Type::SILVER_MINE;
 }
 
 int SilverMine::get_cost() const
@@ -17,15 +17,15 @@ int SilverMine::get_cost() const
 
 std::string SilverMine::get_long_information() const
 {
-    cout << SILVER_HEADER << endl;
-    cout << SILVER_1_1 << Building::number_neighboring_population() + city.get_population() << endl;
-    cout << SILVER_2_1 << endl;
+    return SILVER_HEADER + '\n' +
+           SILVER_1_1 + std::to_string(Building::number_neighboring_population()) +
+           std::to_string(city.get_population()) + '\n' + SILVER_2_1 + '\n';
 }
 
 std::string SilverMine::get_short_information() const
 {
-    cout << SILVER_HEADER << endl;
-    cout << SILVER_1_1 << Building::number_neighboring_population() + city.get_population() << endl;
+    return SILVER_HEADER + '\n' +
+           SILVER_1_1 + std::to_string(Building::number_neighboring_population()) + std::to_string(city.get_population()) + '\n';
 }
 
 int SilverMine::get_revenue() const
@@ -37,3 +37,4 @@ int SilverMine::get_population() const { return 0; }
 int SilverMine::get_max_population() const { return 0; }
 int SilverMine::get_population_growth() const { return 0; }
 int SilverMine::get_population_growth_rate_contribution() const { return 0; }
+void SilverMine::increase_population(int population) { population = 0; }
