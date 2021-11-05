@@ -269,9 +269,7 @@ bool City::construct_at(Building::Type type, const Coordinates &coordinates)
         break;
 
     case Building::Type::CLINIC:
-        cout << "before" << endl;
         grid[coordinates.x][coordinates.y] = new Clinic(*this);
-        cout << "after" << endl;
         this->budget -= 50;
         break;
 
