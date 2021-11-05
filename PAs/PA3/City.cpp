@@ -1,6 +1,7 @@
 #include "City.h"
 #include <fstream>
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 City::City(int size)
@@ -26,9 +27,158 @@ City::City(int size)
     this->budget = 150;     // Initially, the budget is $150
 }
 
+struct Data
+{
+    int buildingTypeNumber;
+    int pop;
+};
+
 City::City(const std::string &filename)
 {
-    /**/
+    ifstream ifs;
+    ifs.open(filename);
+    char thisLine[11] = {};
+    int numberLength = 0;
+
+    /* grid_size*/
+    ifs.getline(thisLine, 11);
+    grid_size = ((int)thisLine[0] - 48) * 10 + (int)thisLine[1] - 48;
+
+    /* budget */
+    ifs.getline(thisLine, 11);
+    for (numberLength = 0; numberLength < 11; numberLength++)
+    {
+        if (thisLine[numberLength] == '\0')
+        {
+            break;
+        }
+    }
+    for (int i = 0; i <= numberLength - 1; i++)
+    {
+        budget += ((int)thisLine[numberLength - (i + 1)] - 48) * pow(10, i);
+    }
+
+    /* turns */
+    ifs.getline(thisLine, 11);
+    for (numberLength = 0; numberLength < 11; numberLength++)
+    {
+        if (thisLine[numberLength] == '\0')
+        {
+            break;
+        }
+    }
+    for (int i = 0; i <= numberLength - 1; i++)
+    {
+        turn += ((int)thisLine[numberLength - (i + 1)] - 48) * pow(10, i);
+    }
+
+    /* The grid */
+    Data tempMap[grid_size][grid_size] = {};
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            ifs.getline(thisLine, 11);
+            if (thisLine[1] == '\0') // no buildng or not a residential building
+            {
+                tempMap[x][y].buildingTypeNumber = (int)thisLine[0] - 48;
+                tempMap[x][y].pop = 0;
+            }
+            else // a residential building
+            {
+                tempMap[x][y].buildingTypeNumber = (int)thisLine[0] - 48;
+                for (numberLength = 0; numberLength < 11; numberLength++)
+                {
+                    if (thisLine[numberLength + 2] == '\0')
+                    {
+                        break;
+                    }
+                }
+                for (int i = 0; i <= numberLength - 1; i++)
+                {
+                    tempMap[x][y].pop += ((int)thisLine[numberLength - (i + 1) + 2] - 48) * pow(10, i);
+                }
+            }
+        }
+    }
+
+    /* Allocate the 2D array of grid cells with dimensions size by size */
+    this->grid = new Building **[grid_size];
+    for (int j = 0; j < grid_size; j++)
+    {
+        grid[j] = new Building *[grid_size];
+    }
+
+    /* Load the grid */
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            switch (tempMap[x][y].buildingTypeNumber)
+            {
+            case 0:
+                grid[x][y] = nullptr;
+                break;
+
+            case 1:
+                grid[x][y] = new Clinic(*this);
+                break;
+
+            case 2:
+                grid[x][y] = new Hospital(*this);
+                break;
+
+            case 3:
+                grid[x][y] = new SilverMine(*this);
+                break;
+
+            case 4:
+                grid[x][y] = new GoldMine(*this);
+                break;
+
+            case 5:
+                grid[x][y] = new House(*this, tempMap[x][y].pop);
+                break;
+
+            case 6:
+                grid[x][y] = new Apartment(*this, tempMap[x][y].pop);
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    /* register neighboring buildings*/
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            if (x - 1 >= 0 && grid[x - 1][y] != nullptr)
+            {
+                grid[x - 1][y]->register_neighboring_building(grid[x][y]);
+                grid[x][y]->register_neighboring_building(grid[x - 1][y]);
+            }
+            if (x + 1 <= grid_size - 1 && grid[x + 1][y] != nullptr)
+            {
+                grid[x + 1][y]->register_neighboring_building(grid[x][y]);
+                grid[x][y]->register_neighboring_building(grid[x + 1][y]);
+            }
+            if (y - 1 >= 0 && grid[x][y - 1] != nullptr)
+            {
+                grid[x][y - 1]->register_neighboring_building(grid[x][y]);
+                grid[x][y]->register_neighboring_building(grid[x][y - 1]);
+            }
+            if (y + 1 <= grid_size - 1 && grid[x][y + 1] != nullptr)
+            {
+                grid[x][y + 1]->register_neighboring_building(grid[x][y]);
+                grid[x][y]->register_neighboring_building(grid[x][y + 1]);
+            }
+        }
+    }
+
+    ifs.close();
 }
 
 City::~City()
