@@ -20,10 +20,10 @@ public:
     virtual std::string get_short_information() const = 0;
 
     /*implementation is needed*/
-    Building::Category get_category() const;
-    int get_population() const;
-    virtual int get_population_growth_rate_contribution() const;
-    virtual void increase_population(int population);
+    Building::Category get_category() const override;
+    int get_population() const override;
+    virtual int get_population_growth_rate_contribution() const override;
+    virtual void increase_population(int population) override;
 
     /*dummy implementation will be needed*/
     virtual int get_revenue() const;

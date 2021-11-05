@@ -530,6 +530,7 @@ void City::move_to_next_turn()
 
     /*3. the population is increased/decreased according to the game mechanics*/
     int pop_growth_for_this_residential_building = 0;
+    int pop_growth_for_each_grid[grid_size][grid_size] = {};
     for (int x = 0; x < grid_size; x++)
     {
         for (int y = 0; y < grid_size; y++)
@@ -537,7 +538,17 @@ void City::move_to_next_turn()
             if (grid[x][y] != nullptr)
             {
                 pop_growth_for_this_residential_building = grid[x][y]->get_population_growth();
-                grid[x][y]->increase_population(pop_growth_for_this_residential_building);
+                pop_growth_for_each_grid[x][y] = pop_growth_for_this_residential_building;
+            }
+        }
+    }
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            if (grid[x][y] != nullptr)
+            {
+                grid[x][y]->increase_population(pop_growth_for_each_grid[x][y]);
             }
         }
     }

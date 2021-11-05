@@ -103,7 +103,7 @@ int Building::number_neighboring_population() const
 /*dummy implementation*/
 int Building::get_revenue() const { return 0; }
 int Building::get_population() const { return 0; }
-int Building::get_max_population() const { return 67; }
+int Building::get_max_population() const { return 0; }
 int Building::get_population_growth() const { return 0; }
 int Building::get_population_growth_rate_contribution() const { return 0; }
 void Building::increase_population(int population) {}
