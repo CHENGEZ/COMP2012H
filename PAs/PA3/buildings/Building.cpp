@@ -88,9 +88,10 @@ int Building::number_neighboring_population() const
     return sum_of_population;
 }
 
-int Building::get_revenue() const{}
-int Building::get_population() const{}
-int Building::get_max_population() const{}
-int Building::get_population_growth() const{}
-int Building::get_population_growth_rate_contribution() const{}
-void Building::increase_population(int population){}
+/*dummy implementation*/
+int Building::get_revenue() const { return 0; }
+int Building::get_population() const { return 0; }
+int Building::get_max_population() const { return 0; }
+int Building::get_population_growth() const { return 0; }
+int Building::get_population_growth_rate_contribution() const { return 0; }
+void Building::increase_population(int population) {}
