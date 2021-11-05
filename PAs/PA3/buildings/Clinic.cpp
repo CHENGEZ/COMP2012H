@@ -1,4 +1,4 @@
-#include "Clinic.h"
+// #include "Clinic.h"
 #include "../City.h"
 using namespace std;
 

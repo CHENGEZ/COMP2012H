@@ -1,4 +1,4 @@
-#include "GoldMine.h"
+// #include "GoldMine.h"
 #include "../City.h"
 
 using namespace std;

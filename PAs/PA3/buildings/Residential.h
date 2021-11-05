@@ -26,8 +26,8 @@ public:
     virtual void increase_population(int population);
 
     /*dummy implementation will be needed*/
-    virtual int get_revenue() const override;
-    virtual int get_max_population() const override;
-    virtual int get_population_growth() const override;
+    virtual int get_revenue() const;
+    virtual int get_max_population() const;
+    virtual int get_population_growth() const;
 };
 #endif // RESIDENTIAL_H
