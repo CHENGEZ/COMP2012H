@@ -716,30 +716,26 @@ bool City::demolish_at(const Coordinates &coordinates)
     if (grid[coordinates.x][coordinates.y] == nullptr)
         return false;
 
-    grid[coordinates.x][coordinates.y]->~Building();
-
     if (coordinates.x - 1 >= 0 && grid[coordinates.x - 1][coordinates.y] != nullptr)
     {
         grid[coordinates.x - 1][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
-        grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x - 1][coordinates.y]);
     }
     if (coordinates.x + 1 <= grid_size - 1 && grid[coordinates.x + 1][coordinates.y] != nullptr)
     {
         grid[coordinates.x + 1][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
-        grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x + 1][coordinates.y]);
     }
     if (coordinates.y - 1 >= 0 && grid[coordinates.x][coordinates.y - 1] != nullptr)
     {
         grid[coordinates.x][coordinates.y - 1]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
-        grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y - 1]);
     }
     if (coordinates.y + 1 <= grid_size - 1 && grid[coordinates.x][coordinates.y + 1] != nullptr)
     {
         grid[coordinates.x][coordinates.y + 1]->deregister_neighboring_building(grid[coordinates.x][coordinates.y]);
-        grid[coordinates.x][coordinates.y]->deregister_neighboring_building(grid[coordinates.x][coordinates.y + 1]);
     }
 
+    delete grid[coordinates.x][coordinates.y];
     grid[coordinates.x][coordinates.y] = nullptr;
+    
     return true;
 }
 
