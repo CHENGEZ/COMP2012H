@@ -37,4 +37,4 @@ int SilverMine::get_population() const { return 0; }
 int SilverMine::get_max_population() const { return 0; }
 int SilverMine::get_population_growth() const { return 0; }
 int SilverMine::get_population_growth_rate_contribution() const { return 0; }
-void SilverMine::increase_population(int population) { population = 0; }
+void SilverMine::increase_population(int population) { population += 0; }

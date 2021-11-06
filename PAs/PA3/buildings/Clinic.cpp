@@ -31,4 +31,4 @@ int Clinic::get_population() const { return 0; }
 int Clinic::get_max_population() const { return 0; }
 int Clinic::get_population_growth() const { return 0; }
 int Clinic::get_population_growth_rate_contribution() const { return 60 / (1 + Building::number_neighboring_health_buildings()); }
-void Clinic::increase_population(int population) { population = 0; }
+void Clinic::increase_population(int population) { population += 0; }

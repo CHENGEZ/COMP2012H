@@ -7,7 +7,7 @@ Building::Category Health::get_category() const
     return Building::Category::HEALTH;
 }
 
-void Health::increase_population(int population) { population = 0; }
+void Health::increase_population(int population) { population += 0; }
 int Health::get_revenue() const { return 0; }
 int Health::get_population() const { return 0; }
 int Health::get_max_population() const { return 0; }

@@ -22,6 +22,8 @@ bool Building::register_neighboring_building(Building *building)
             return true;
         }
     }
+
+    return false;
 }
 
 bool Building::deregister_neighboring_building(Building *building)
@@ -106,4 +108,4 @@ int Building::get_population() const { return 0; }
 int Building::get_max_population() const { return 0; }
 int Building::get_population_growth() const { return 0; }
 int Building::get_population_growth_rate_contribution() const { return 0; }
-void Building::increase_population(int population) {}
+void Building::increase_population(int population) { population += 0; }
