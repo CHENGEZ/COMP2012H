@@ -40,6 +40,9 @@ City::City(const std::string &filename)
     char thisLine[11] = {};
     int numberLength = 0;
 
+    grid_size = 0;
+    budget = 0;
+    turn = 0;
     /* grid_size*/
     ifs.getline(thisLine, 11);
     for (numberLength = 0; numberLength < 11; numberLength++)
@@ -83,7 +86,21 @@ City::City(const std::string &filename)
     }
 
     /* The grid */
-    Data tempMap[grid_size][grid_size] = {};
+    Data **tempMap = new Data *[grid_size];
+    for (int j = 0; j < grid_size; j++)
+    {
+        tempMap[j] = new Data[grid_size];
+    }
+
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            tempMap[x][y].buildingTypeNumber = 0;
+            tempMap[x][y].pop = 0;
+        }
+    }
+
     for (int x = 0; x < grid_size; x++)
     {
         for (int y = 0; y < grid_size; y++)
@@ -189,6 +206,15 @@ City::City(const std::string &filename)
     }
 
     ifs.close();
+
+    for (int i = 0; i < grid_size; i++)
+    {
+        delete[] tempMap[i];
+        tempMap[i] = nullptr;
+    }
+
+    delete[] tempMap;
+    tempMap = nullptr;
 }
 
 City::~City()
@@ -355,7 +381,6 @@ void City::save(const std::string &filename) const
     ofs.open(filename);
 
     int thisNumberLength = 0;
-    int thisResidentialPop = 0;
     Building::Type thisBuildingType;
 
     char numberArray[10] = {};
@@ -735,7 +760,7 @@ bool City::demolish_at(const Coordinates &coordinates)
 
     delete grid[coordinates.x][coordinates.y];
     grid[coordinates.x][coordinates.y] = nullptr;
-    
+
     return true;
 }
 
@@ -758,7 +783,21 @@ void City::move_to_next_turn()
 
     /*3. the population is increased/decreased according to the game mechanics*/
     int pop_growth_for_this_residential_building = 0;
-    int pop_growth_for_each_grid[grid_size][grid_size] = {};
+    //int pop_growth_for_each_grid[grid_size][grid_size] = {};
+    int **pop_growth_for_each_grid = new int *[grid_size];
+    for (int i = 0; i < grid_size; i++)
+    {
+        pop_growth_for_each_grid[i] = new int[grid_size];
+    }
+
+    for (int x = 0; x < grid_size; x++)
+    {
+        for (int y = 0; y < grid_size; y++)
+        {
+            pop_growth_for_each_grid[x][y] = 0;
+        }
+    }
+
     for (int x = 0; x < grid_size; x++)
     {
         for (int y = 0; y < grid_size; y++)
@@ -780,4 +819,12 @@ void City::move_to_next_turn()
             }
         }
     }
+
+    for (int i = 0; i < grid_size; i++)
+    {
+        delete[] pop_growth_for_each_grid[i];
+        pop_growth_for_each_grid[i] = nullptr;
+    }
+    delete[] pop_growth_for_each_grid;
+    pop_growth_for_each_grid = nullptr;
 }
