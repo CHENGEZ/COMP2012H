@@ -18,14 +18,13 @@ int SilverMine::get_cost() const
 std::string SilverMine::get_long_information() const
 {
     return SILVER_HEADER + '\n' +
-           SILVER_1_1 + std::to_string(Building::number_neighboring_population()) +
-           std::to_string(city.get_population()) + '\n' + SILVER_2_1 + '\n';
+           SILVER_1_1 + std::to_string(Building::number_neighboring_population() + city.get_population()) + '\n' + SILVER_2_1 + '\n';
 }
 
 std::string SilverMine::get_short_information() const
 {
     return SILVER_HEADER + '\n' +
-           SILVER_1_1 + std::to_string(Building::number_neighboring_population()) + std::to_string(city.get_population()) + '\n';
+           SILVER_1_1 + std::to_string(Building::number_neighboring_population() + city.get_population()) + '\n';
 }
 
 int SilverMine::get_revenue() const
