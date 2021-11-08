@@ -2,9 +2,18 @@ OUT := simplecity
 ZIP_OUT := pa3.zip
 
 CXX := g++
+
+ifeq (Windows_NT, $(OS))
+
+CXXFLAGS := -std=c++11 -Wall -Wextra -pedantic -Iinclude 
+LDFLAGS := 
+
+else
+
 CXXFLAGS := -std=c++11 -Wall -Wextra -pedantic -Iinclude -fsanitize=address,leak,undefined -g
 LDFLAGS := -fsanitize=address,leak,undefined -g
 
+endif
 ifeq (Windows_NT, $(OS))
 
 RM := rm
