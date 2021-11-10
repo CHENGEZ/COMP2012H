@@ -6,6 +6,9 @@
 template <typename T>
 class my_unique_ptr
 {
+private:
+	T *p;
+
 public:
 	/*******************************
 	 * Constructors and Destructor *
@@ -14,7 +17,7 @@ public:
 	// Default Constructor, p is empty.
 	my_unique_ptr()
 	{
-		// TODO
+		this->p = nullptr;
 	}
 
 	// Parameterized Constructor, takes ownership of p.
@@ -24,19 +27,32 @@ public:
 	 */
 	my_unique_ptr(T *p)
 	{
-		// TODO
+		this->p = p;
 	}
 
 	// Copy Constructor - transfers ownership of object from u to this pointer
 	my_unique_ptr(my_unique_ptr<T> &x)
 	{
-		// TODO
+		if (x.p != nullptr)
+		{
+			this->p = x.p;
+			x.p = nullptr;
+		}
+		else
+		{
+			this->p = nullptr;
+		}
 	}
 
 	// Destructor - deallocate p if it is not a nullptr.
 	~my_unique_ptr()
 	{
 		// TODO
+		if (this->p != nullptr)
+		{
+			delete p;
+			p = nullptr;
+		}
 	}
 
 	/************************
@@ -46,18 +62,29 @@ public:
 	// Copy Assignment Operator.
 	my_unique_ptr &operator=(my_unique_ptr<T> &x)
 	{
-		// TODO
+		if (p != nullptr)
+		{
+			delete p;
+			p == nullptr;
+		}
+
+		p = x.p;
+		x.p = nullptr;
+
+		return *this;
 	}
 
 	// Dereference Operators.
 	T &operator*() const
 	{
 		// TODO
+		return *p;
 	}
 
 	T *operator->() const
 	{
 		// TODO
+		return p;
 	}
 
 	/*********************
@@ -70,25 +97,33 @@ public:
 	T *release()
 	{
 		// TODO
+		T* temp =p; 
+		p = nullptr;
+		return temp;
 	}
 
 	void reset()
 	{
 		// TODO
+		delete p;
+		p = nullptr;
 	}
 
 	void reset(T *p)
 	{
 		// TODO
+		delete this->p;
+		this->p = p;
 	}
 
 	void swap(my_unique_ptr<T> &x)
 	{
-		// TODO
+		//
+		T *temp = x.p;
+		x.p = this->p;
+		this->p = temp;
+		1;
 	}
-
-private:
-	T *p;
 };
 
 #endif /* MY_UNIQUE_PTR_H_ */
