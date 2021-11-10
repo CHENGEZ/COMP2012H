@@ -97,7 +97,7 @@ public:
 	T *release()
 	{
 		// TODO
-		T* temp =p; 
+		T *temp = p;
 		p = nullptr;
 		return temp;
 	}
@@ -122,7 +122,6 @@ public:
 		T *temp = x.p;
 		x.p = this->p;
 		this->p = temp;
-		1;
 	}
 };
 
