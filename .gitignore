@@ -12,3 +12,4 @@ auto-testing/
 *.stackdump
 simplecity
 !zip.exe
+*.user
